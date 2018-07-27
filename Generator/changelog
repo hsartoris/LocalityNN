@@ -1,0 +1,27 @@
+27 July 2018
+
+Halting development on Generator.py for now.
+
+Reasoning:
+	* Hard to predict required general features before building at least one 
+	generator
+
+
+Untethering erdos_renyi.py from Generator.py
+
+Reasoning:
+	* Due to above, Generator.py may not be all that useful as a template
+
+
+Beginning graph analysis suite in Analysis/Graphs. Aim is to provide easy access 
+to common graph properties. This is probably redundant for some measures, since 
+they are likely provided by Scipy or Numpy, but this was I can ensure 
+customizability.
+
+Completed (tentatively):
+	* component analysis
+	* order
+	* size
+
+
+Barely started Barabasi-Albert model generator.
