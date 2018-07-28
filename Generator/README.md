@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------------
-USAGE
+Usage
 ------------------------------------------------------------------------------------
 To use a Generator module, import the Generator wrapper as well as the module:
 
@@ -20,7 +20,7 @@ For an Erdos-Renyi generator on 5 nodes, this appears as follows:
 See Template.py for method documentation.
 
 ------------------------------------------------------------------------------------
-CREATING MODULES
+Creating Modules
 ------------------------------------------------------------------------------------
 Generator modules are classes extending Template. The only methods that need to 
 be overridden are _get_default_params, a class method, and _generate_structure.  
