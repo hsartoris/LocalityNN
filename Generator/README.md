@@ -37,3 +37,9 @@ Once your module is ready, place it in `Generator/modules/` and modify
 ```python
 from .<filename> import <classname>
 ```
+
+For the class `Erdos_Renyi`, located in `erdos_renyi.py`:
+
+```python
+from .erdos_renyi import Erdos_Renyi
+```
