@@ -1,5 +1,5 @@
-from Framework.Generator import Generator
-from Framework.Generator.modules import Erdos_Renyi
+from Framework.Simulator import Simulator
+from Framework.Simulator.modules import Erdos_Renyi
 
 gen = Generator(Erdos_Renyi, 5)
 print(gen.get_structure())

@@ -1,14 +1,15 @@
-from ..Template import Template
+from ..AbstractGenerator import AbstractGenerator
 from typing import Dict
 import numpy as np
 
-class Erdos_Renyi(Template):
+class Erdos_Renyi(AbstractGenerator):
     """Erdos-Renyi graph generator. Uses G(n,p) model.
     
     ###TODO: G(n,p) may be unsatisfactory for small n. exchange models based on 
         n?
 
-    For method documentation see Template.py
+    # TODO: documentation in Generator.py
+    For method documentation see AbstractGenerator.py
 
     Parameters
        p: probability of given edge connection. default .1

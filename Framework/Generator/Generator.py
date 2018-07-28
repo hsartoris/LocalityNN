@@ -1,8 +1,8 @@
-from .Template import Template
+from .AbstractGenerator import AbstractGenerator
 from typing import Callable, Dict
 import numpy as np
 
-class Generator(Template):
+class Generator(AbstractGenerator):
     """Proxy class for generator modules found in Generator.modules.
 
     Effectively provides a public interface to modules.
@@ -14,7 +14,7 @@ class Generator(Template):
     """
 
     def __init__(self, module: Callable, num_neurons: int) -> None:
-        self._module: Template = module(num_neurons)
+        self._module: AbstractGenerator = module(num_neurons)
    
     def get_default_params(self) -> Dict:
         return self._module._get_default_params()
