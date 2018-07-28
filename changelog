@@ -30,8 +30,11 @@ Barely started Barabasi-Albert model generator.
 
 28 July 2018
 
-Ok fine I'll do it as a framework. Resuming Generator.py
+Ok fine I'll do it as a framework.
 
 Structure:
 	Generator.py - Proxy class for modules
 	Template.py - Template class implented by modules.
+
+Similar applies to Simulator stuff. Gonna need to abstract base template for 
+both.
