@@ -27,9 +27,9 @@ Creating Modules
 ------------------------------------------------------------------------------------
 Generator modules are classes extending `Template`. The only methods that need 
 to be overridden are `_get_default_params`, a class method, and 
-`_generate_structure`.  Storing the resulting matrix is handled by `Template`.
-
-Please use type hints.
+`_generate_structure`.  Storing the resulting matrix is handled by `Template`.  
+Return types for both methods are hinted in `Template`; please hint 
+appropriately.
 
 Once your module is ready, place it in `Generator/modules/` and modify 
 `Generator/modules/__init__.py` to include a line importing your module class:
