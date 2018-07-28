@@ -1,5 +1,5 @@
 Usage
-------------------------------------------------------------------------------------
+---
 To use a Generator module, import the Generator wrapper as well as the module:
 
 ```python
@@ -24,7 +24,7 @@ gen = Generator(Erdos_Renyi, 5)
 See `Template.py` for method documentation.
 
 Creating Modules
-------------------------------------------------------------------------------------
+---
 Generator modules are classes extending `Template`. The only methods that need 
 to be overridden are `_get_default_params`, a class method, and 
 `_generate_structure`.  Storing the resulting matrix is handled by `Template`.  
@@ -43,3 +43,12 @@ For the class `Erdos_Renyi`, located in `erdos_renyi.py`:
 ```python
 from .erdos_renyi import Erdos_Renyi
 ```
+
+TODO
+---
+1. Implement more generators
+..* Finish Barabasi-Albert
+2. Delineate common parameters vs unique parameters; e.g. node count & 
+   probability
+..* perhaps separate dicts and methods
+3. Optional capacity for parameter validation (within range or the like)
