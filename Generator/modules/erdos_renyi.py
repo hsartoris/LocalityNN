@@ -1,10 +1,11 @@
-from ..Generator import Generator
+from ..Template import Template
+from typing import Dict
 import numpy as np
 
-class Erdos_Renyi(Generator):
+class Erdos_Renyi(Template):
     """Erdos-Renyi graph generator. Uses G(n,p) model.
 
-    For method documentation see Generator.py
+    For method documentation see Template.py
 
     Parameters
        p: probability of given edge connection. default .1
@@ -12,14 +13,12 @@ class Erdos_Renyi(Generator):
     """
 
     @classmethod
-    def _get_default_params(cls):
-        return {p: .1, self_loop: False}
+    def _get_default_params(cls) -> Dict:
+        return {'p': .1, 'self_loop': False}
 
-    def __init__(self, num_neurons):
-        super(num_neurons)
-
-    def _generate_structure(self):
-        mat = np.random.choice([1,0], size=(self.n, self.n),
+    def _generate_structure(self) -> np.ndarray:
+        # TODO: mypy doesn't know what type np.random.choice returns
+        mat: np.ndarray = np.random.choice([1,0], size=(self.n, self.n),
                 p=[self.params['p'], 1-self.params['p']])
         if not self.params['self_loop']:
             for i in range(self.n):

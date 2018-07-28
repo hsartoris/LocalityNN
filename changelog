@@ -25,3 +25,13 @@ Completed (tentatively):
 
 
 Barely started Barabasi-Albert model generator.
+
+-------------------------------------------------------
+
+28 July 2018
+
+Ok fine I'll do it as a framework. Resuming Generator.py
+
+Structure:
+	Generator.py - Proxy class for modules
+	Template.py - Template class implented by modules.
