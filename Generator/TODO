@@ -1,5 +1,8 @@
+TODOs for Generator
+
 28 July 2018
 - Implement more generators
+	* finish Barabasi-Albert
 - Delineate common parameters vs unique parameters
 	* separate dicts and methods?
 	* e.g. num_neurons; probability; etc

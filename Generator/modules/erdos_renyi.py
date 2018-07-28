@@ -4,6 +4,9 @@ import numpy as np
 
 class Erdos_Renyi(Template):
     """Erdos-Renyi graph generator. Uses G(n,p) model.
+    
+    ###TODO: G(n,p) may be unsatisfactory for small n. exchange models based on 
+        n?
 
     For method documentation see Template.py
 
