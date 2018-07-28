@@ -47,8 +47,8 @@ from .erdos_renyi import Erdos_Renyi
 TODO
 ---
 1. Implement more generators
-  * Finish Barabasi-Albert
+	* Finish Barabasi-Albert
 2. Delineate common parameters vs unique parameters; e.g. node count & 
    probability
-  * perhaps separate dicts and methods
+	* perhaps separate dicts and methods
 3. Optional capacity for parameter validation (within range or the like)
