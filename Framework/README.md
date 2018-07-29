@@ -4,7 +4,7 @@ Here, I provide an overview of the implementation of the framework as created so
 far.
 
 common
-===
+---
 As of the moment, `common` contains one class that both simulator and generator 
 classes derive from: `AbstractBase`. This class provides parameter setting and 
 getting, as well as the abstract class method `_get_default_params`, which is 
