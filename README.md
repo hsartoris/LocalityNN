@@ -11,7 +11,7 @@ The framework will eventually consist of three parts: generator, simulator, and
 ANN. Currently, the generator and simulator have complete foundations, and 
 Erdos-Renyi generation and simple matrix multiplication modules are ready.
 
-###Example usage
+### Example usage
 ```python
 from Framework import Generator, Simulator
 from Framework.Generator.modules import Erdos_Renyi
