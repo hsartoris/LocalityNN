@@ -10,6 +10,8 @@ class AbstractGenerator(AbstractBase):
     Attributes:
         new_structure: generates and returns new matrix.
         get_structure: returns previously created matrix.
+
+    For public method documentation, see Generator.py
     """
 
     def __init__(self, num_neurons, params: Dict = None) -> None:
