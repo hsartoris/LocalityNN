@@ -44,3 +44,9 @@ with a total of seven lines of operating code between them.
 For a more technical examination of the framework structure, see 
 `Framework/README.md`. For usage details and module creation instructions, see 
 the READMEs in `Framework/Generator/` and `Framework/Simulator/`
+
+TODO
+---
+Add accessory modules to simulator for noise introduction etc
+
+Refactor AbstractBase to Parameterizable
