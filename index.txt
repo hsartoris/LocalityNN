@@ -1,0 +1,25 @@
+Mypy Type Check Coverage Summary
+================================
+
+Script: index
+
++---------------------------------------------+-------------------+---------+
+| Module                                      | Imprecision       | Lines   |
++---------------------------------------------+-------------------+---------+
+| Framework                                   |   0.00% imprecise |   2 LOC |
+| Framework.Generator                         |   0.00% imprecise |   1 LOC |
+| Framework.Generator.AbstractGenerator       |  28.57% imprecise |  35 LOC |
+| Framework.Generator.Generator               |  26.09% imprecise |  46 LOC |
+| Framework.Generator.modules                 |   0.00% imprecise |   3 LOC |
+| Framework.Generator.modules.barabasi_albert |  27.78% imprecise |  18 LOC |
+| Framework.Generator.modules.erdos_renyi     |  21.88% imprecise |  32 LOC |
+| Framework.Simulator                         |   0.00% imprecise |   1 LOC |
+| Framework.Simulator.AbstractSimulator       |  25.64% imprecise |  39 LOC |
+| Framework.Simulator.Simulator               |  26.67% imprecise |  45 LOC |
+| Framework.Simulator.modules                 |   0.00% imprecise |   1 LOC |
+| Framework.Simulator.modules.matmul          |  25.00% imprecise |  40 LOC |
+| Framework.common                            |   0.00% imprecise |   1 LOC |
+| Framework.common.AbstractBase               |  34.29% imprecise |  35 LOC |
++---------------------------------------------+-------------------+---------+
+| Total                                       |  26.09% imprecise | 299 LOC |
++---------------------------------------------+-------------------+---------+

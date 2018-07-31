@@ -12,21 +12,21 @@ class AbstractBase(object):
         set_params: accepts dict setting some or all parameters for module
     """
 
-    def __init__(self, params: Dict = None) -> None:
-        self.params: Dict = self._get_default_params()
+    def __init__(self, params: Dict[str,any] = None) -> None:
+        self.params: Dict[str,any] = self._get_default_params()
         if not params is None:
             self.set_params(params)
 
     @classmethod
-    def _get_default_params(cls) -> Dict:
+    def _get_default_params(cls) -> Dict[str,any]:
         """Class method returning default parameters for given module."""
         raise NotImplementedError("""This implementation is abstract. Call on a 
            subclass instance with get_default_params""")
 
-    def get_params(self) -> Dict:
+    def get_params(self) -> Dict[str,any]:
         return self.params
 
-    def set_params(self, params: Dict) -> None:
+    def set_params(self, params: Dict[str,any]) -> None:
         for key in list(params):
             if not key in list(self.params):
                 raise KeyError("Key " + str(key) + " is not a parameter for " + 

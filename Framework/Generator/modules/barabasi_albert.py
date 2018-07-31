@@ -13,5 +13,6 @@ class Barabasi_Albert(Generator):
     def __init__(self, num_neurons):
         super(num_neurons)
 
-    def _generate_structure(self) -> np.matrix:
-
+    def _generate_structure(self) -> np.ndarray:
+        # TODO
+        raise NotImplementedError

@@ -30,9 +30,11 @@ def Layer(AbstractBase):
             self.use_scope: bool = True
             self.name: str = name
 
-        self.outputs: tf.Tensor
-        self._layer_ops()
+        self._setup()
+        self.outputs: tf.Tensor = self._layer_ops()
 
+    def _setup(self) -> None:
+        pass
 
 
     def _layer_ops(self, inputs: tf.Tensor) -> tf.Tensor:
