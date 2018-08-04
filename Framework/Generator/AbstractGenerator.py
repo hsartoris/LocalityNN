@@ -14,7 +14,7 @@ class AbstractGenerator(AbstractBase):
     For public method documentation, see Generator.py
     """
 
-    def __init__(self, num_neurons, params: Dict = None) -> None:
+    def __init__(self, num_neurons: int, params: Dict[str,any] = None) -> None:
         """Allocates new matrix of num_neurons x num_neurons."""
         # call to AbstractBase __init__
         super(AbstractGenerator, self).__init__(params)

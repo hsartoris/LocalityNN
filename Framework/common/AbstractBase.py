@@ -33,3 +33,9 @@ class AbstractBase(object):
                         type(self).__name__)
             else:
                 self.params[key] = params[key]
+        self._validate_params()
+
+    def _validate_params(self) -> None:
+        """Optionally validate that all parameters are set to appropriate 
+        values."""
+        pass

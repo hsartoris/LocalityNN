@@ -13,7 +13,7 @@ class Simulator(AbstractSimulator):
     This creates a matrix multiplication simulator for `matrix`.
     """
 
-    def __init__(self, module: Callable, matrix: np.ndarray,
+    def __init__(self, module: AbstractSimulator, matrix: np.ndarray,
             params: Dict = None) -> None:
         """Creates instance of provided simulator module, to which all function 
         calls are passed."""
