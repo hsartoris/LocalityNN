@@ -1,9 +1,9 @@
-from ..common import AbstractBase
+from ..common import Parameterizable
 import numpy as np
 from typing import Dict
 
-class AbstractSimulator(AbstractBase):
-    """Abstract class for simulator modules. Extends AbstractBase with 
+class AbstractSimulator(Parameterizable):
+    """Abstract class for simulator modules. Extends Parameterizable with 
     simulator-specific needs.
 
     See Simulator.py for public function documentation.
@@ -33,7 +33,7 @@ class AbstractSimulator(AbstractBase):
         return out
 
     def set_params(self, params: Dict) -> None:
-        """Overrides AbstractBase set_params method to allow modules to 
+        """Overrides Parameterizable set_params method to allow modules to 
         reperform setup operations after parameter change."""
         super(AbstractSimulator, self).set_params(params)
         self._setup()

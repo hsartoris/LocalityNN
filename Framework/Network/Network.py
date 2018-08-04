@@ -1,3 +1,4 @@
+# Suspending development, back to NetworkBuilder
 # TODO: work in progress. this may need to be rethought
 from Framework.Network import Layer
 from Framework.Network.utils import make_expand

@@ -9,19 +9,19 @@ For more specific implementation details, see the code comments.
 common
 ---
 As of the moment, `common` contains one class that both simulator and generator 
-classes derive from: `AbstractBase`. This class provides parameter setting and 
+classes derive from: `Parameterizable`. This class provides parameter setting and 
 getting, as well as the abstract class method `_get_default_params`, which is 
 overridden on individual modules.
 
 Generator
 ===
 Several components make up the generator framework, all derived from 
-`AbstractBase`.
+`Parameterizable`.
 
 `AbstractGenerator`
 ---
 This class provides the base for `Generator` and modules. It passes off 
-parameter management to `AbstractBase` and instantiates generator-specific 
+parameter management to `Parameterizable` and instantiates generator-specific 
 variables, such as node count and matrix storage. Complete functions for getting 
 and replacing the currently stored matrix are provided, as well as an abstract 
 function for matrix generation, which must be overridden by modules.
@@ -43,15 +43,15 @@ and thus by `Generator`.
 
 Simulator
 ===
-As with the generator, simulator classes derive from `AbstractBase`.
+As with the generator, simulator classes derive from `Parameterizable`.
 
 `AbstractSimulator`
 ---
 This class serves a purpose parallel to that of `AbstractGenerator`. After 
-parameter instantiation by `AbstractBase`, the constructor stores the passed 
+parameter instantiation by `Parameterizable`, the constructor stores the passed 
 matrix and calls `_setup`. A complete implementation of `n_steps` is provided, 
 depending on `step`, which must be overriden by modules along with `_setup`.  
-`set_params`, derived from `AbstractBase`, is overridden to add a call to 
+`set_params`, derived from `Parameterizable`, is overridden to add a call to 
 `_setup` after each parameter change.
 
 `Simulator`

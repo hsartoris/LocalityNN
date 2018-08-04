@@ -1,8 +1,8 @@
-from ..common import AbstractBase
+from ..common import Parameterizable
 import numpy as np
 from typing import Dict
 
-class AbstractGenerator(AbstractBase):
+class AbstractGenerator(Parameterizable):
     """Abstract class for generator modules found in Generator.modules.
 
     Structures come in the form of adjacency matrices stored in numpy arrays.  
@@ -16,7 +16,7 @@ class AbstractGenerator(AbstractBase):
 
     def __init__(self, num_neurons: int, params: Dict[str,any] = None) -> None:
         """Allocates new matrix of num_neurons x num_neurons."""
-        # call to AbstractBase __init__
+        # call to Parameterizable __init__
         super(AbstractGenerator, self).__init__(params)
 
         # generator specific values

@@ -1,0 +1,12 @@
+{
+	"batchsize" : 1,
+	"inputs_dims" : [ 0 : 4, 1 : 3 ],
+	"layers" : [
+		{
+			"name" : "testlayer",
+			"module": "Locality0",
+			"d" : 3,
+			"activation" : "tf.nn.relu"
+		}
+	]
+}

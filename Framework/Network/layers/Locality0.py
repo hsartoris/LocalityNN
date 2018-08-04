@@ -1,4 +1,5 @@
 from ..AbstractLayer import AbstractLayer
+from ..utils import make_expand
 import tensorflow as tf
 import numpy as np
 from typing import Dict, Callable, List
@@ -37,21 +38,21 @@ class Locality0(AbstractLayer):
                 'expand': None # must be provided
                 }
 
-    @classmethod
-    def _global_consts(cls) -> List[str]:
-        """Instructs the managing object to create a constant outside the scope 
-        of this object, for reuse by other layers if necessary.
+    def _get_global_constants(self) -> None:
+        """Gets or creates `expand` matrix.
+        
+        Because multiple `expand` matrices may eventually exist, the global name 
+        is expandN, where N is the base number of nodes defining the size.
         """
-        return ['expand']
+        with tf.variable_scope(tf.get_variable_scope(), reuse=True):
+            # at this point _setup has not been called, so we pull the number of 
+            # neurons from self.input_shape
+            self.n: int = self.input_shape[2]
+            self.expand: tf.Tensor = tf.get_variable(
+                    "expand" + str(self.input_shape[2]),
+        
 
     def _validate_params(self) -> None:
-        # has `expand` been provided?
-        if self.params['expand'] is None:
-            raise AttributeError("`expand` has not been provied.")
-        # if the layer has calculated n, is it compatible?
-        if hasattr(self, 'n'):
-            assert(self.params['expand'].get_shape() == (self.n, self.n**2))
-
         # has d been provided
         if self.params['d'] is None or type(self.params['d']) is not int:
             raise AttributeError("""First output dimension `d` is not provided 
@@ -64,7 +65,6 @@ class Locality0(AbstractLayer):
         well as required tiling matrices.
         """
         self.tsteps: int = self.input_shape[1]
-        self.n: int = self.input_shape[2]
         assert(not self.tsteps == 0)
         assert(not self.n == 0)
 

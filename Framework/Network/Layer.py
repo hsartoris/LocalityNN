@@ -36,7 +36,7 @@ class Layer(AbstractLayer):
     def get_params(self) -> Dict[str, any]:
         """Retrieves currend module parameters.
 
-        Implemented on AbstractBase.
+        Implemented on Parameterizable.
         """
         return self._module.get_params()
 

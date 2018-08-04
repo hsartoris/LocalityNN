@@ -1,8 +1,8 @@
 import numpy as np
 from typing import Dict
 
-class AbstractBase(object):
-    """Abstract base for Simulator and Generator templates.
+class Parameterizable(object):
+    """Abstract base for modules requiring dicts of parameters.
 
     `params` defines details for simulation that may be specific to a given 
     module.

@@ -48,5 +48,3 @@ the READMEs in `Framework/Generator/` and `Framework/Simulator/`
 TODO
 ---
 Add accessory modules to simulator for noise introduction etc
-
-Refactor AbstractBase to Parameterizable

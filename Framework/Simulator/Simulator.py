@@ -25,12 +25,12 @@ class Simulator(AbstractSimulator):
         return self._module._get_default_params()
 
     def get_params(self) -> Dict:
-        """Retrieves current module parameters. Implemented on AbstractBase."""
+        """Retrieves current module parameters. Implemented on Parameterizable."""
         return self._module.get_params()
 
     def set_params(self, params: Dict) -> None:
         """Allows changing of simulator parameters. AbstractSimulator overrides 
-        AbstractBase to add a call to _setup, in case values need to be 
+        Parameterizable to add a call to _setup, in case values need to be 
         recalculated."""
         self._module.set_params(params)
 

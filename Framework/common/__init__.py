@@ -1,1 +1,1 @@
-from .AbstractBase import AbstractBase
+from .Parameterizable import Parameterizable

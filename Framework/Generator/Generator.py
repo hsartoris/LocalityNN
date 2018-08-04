@@ -25,12 +25,12 @@ class Generator(AbstractGenerator):
         return self._module._get_default_params()
 
     def get_params(self) -> Dict:
-        """Retrieves current module parameters. Implemented on AbstractBase."""
+        """Retrieves current module parameters. Implemented on Parameterizable."""
         return self._module.get_params()
 
     def set_params(self, params: Dict) -> None:
         """Allows changing of generator parameters. Implemented on 
-        AbstractBase."""
+        Parameterizable."""
         self._module.set_params(params)
 
     def new_structure(self) -> np.ndarray:

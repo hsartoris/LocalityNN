@@ -1,11 +1,11 @@
-from ..common import AbstractBase
+from ..common import Parameterizable
 import tensorflow as tf
 from typing import List, Callable, Dict, Tuple
 
-class AbstractLayer(AbstractBase):
+class AbstractLayer(Parameterizable):
     """Abstract class for wrapping layer ops into a full layer.
 
-    Extends AbstractBase for parameter management.
+    Extends Parameterizable for parameter management.
 
     Child classes can optionally override _setup, and must override _layer_ops.
 
@@ -44,6 +44,10 @@ class AbstractLayer(AbstractBase):
             self.use_scope = True
             self.name: str = name
 
+        # allow module to retrieve globally scoped constants
+        self._get_global_constants()
+
+        # run local operations, with scope if name is provided
         if self.use_scope:
             with tf.variable_scope(self.name):
                 self._setup()
@@ -51,23 +55,12 @@ class AbstractLayer(AbstractBase):
         else:
             self._setup()
             self.outputs: tf.Tensor = self._layer_ops()
-
-    @classmethod
-    def _global_consts(cls) -> List[str]:
-        """Optional class method used to instruct LayerStack to prepare globally 
-        scoped constant values, to avoid unecessary memory use on duplicate 
-        constants.
-
-        Should return a list of constant names, which the managing object will 
-        need to recognize. Dimensionality should be inferred by the managing 
-        object.
-
-        The requested constants should be passed to the layer via `params`.
-
-        If the constant already exists, the existing one should be used by the 
-        managing object.
+    
+    def _get_global_constants(self) -> None:
+        """Optional method to allow modules to retrieve global constants before 
+        scoping is used. Must use tf.get_variable.
         """
-        return []
+        pass
 
     def _setup(self) -> None:
         """Any operations that should be run before _layer_ops. Optional.
