@@ -1,3 +1,7 @@
+# TODO: DEVELOPMENT SUSPENDED
+# this may eventually become a way to treat a group of layers as effectively one
+# to do that, however, at the moment it's frying too many fish
+
 from .Layer import Layer
 import tensorflow as tf
 from typing import Dict, List
