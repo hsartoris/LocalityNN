@@ -1,6 +1,9 @@
 from ..common import Parameterizable
 import tensorflow as tf
 from typing import List, Callable, Dict, Tuple
+from .util import JSONDecoder, encode_json
+
+confdir = "conf/"
 
 class AbstractLayer(Parameterizable):
     """Abstract class for wrapping layer ops into a full layer.
@@ -17,11 +20,7 @@ class AbstractLayer(Parameterizable):
     
     """
 
-    def __init__(self, inputs: tf.Tensor,
-            activation: Callable[[tf.Tensor, str], tf.Tensor],
-            name: str,
-            batchsize: int,
-            params: Dict) -> None:
+    def __init__(self, inputs: tf.Tensor, params: Dict) -> None:
         # call superclass initializer with params as argument
         super(AbstractLayer, self).__init__(params)
 
@@ -30,19 +29,19 @@ class AbstractLayer(Parameterizable):
         self.inputs: tf.Tensor = inputs
         self.input_shape: List[int] = inputs.get_shape().as_list()
         self.dtype: type = inputs.dtype
-        self.activation: Callable[[tf.Tensor, str], tf.Tensor] = activation
+        self.activation: Callable[[tf.Tensor, str], tf.Tensor] = \
+                self.params['activation']
 
-        self.batchsize: int = batchsize
+        self.batchsize: int = self.params['batchsize']
+
+        self.name: str = self.params['name']
         
         # TODO: convert this to a logging message
-        self.use_scope: bool
-        if name is None:
-            self.use_scope = False
+        self.use_scope: bool = self.names is not None
+
+        if not self.use_scope:
             print("Warning: this instance of " + type(self).__name__ +
                     " is running unscoped.")
-        else:
-            self.use_scope = True
-            self.name: str = name
 
         # allow module to retrieve globally scoped constants
         self._get_global_constants()
@@ -55,7 +54,26 @@ class AbstractLayer(Parameterizable):
         else:
             self._setup()
             self.outputs: tf.Tensor = self._layer_ops()
-    
+
+    @classmethod
+    def _load_config(cls) -> None:
+        # load configuration information without instantiating
+        if not hasattr(cls, "defaults"):
+            cls.json_decoder: JSONDecoder = JSONDecoder()
+            with open(cls.confdir + cls.__name__ + ".json") as f:
+                params: Dict[str, any] = cls.json_decoder.load_json(f)
+            cls.defaults: Dict[str, any] = params['defaults']
+            cls.types: Dict[str, type] = params['types']
+            cls.requirements: List[str] = params['requirements']
+
+    @classmethod
+    def _get_default_params(cls) -> Dict[str, any]:
+        """Load config file for module. Should obviate implementing this method 
+        on individual modules.
+        """
+        cls._load_config()
+        return cls.defaults
+
     def _get_global_constants(self) -> None:
         """Optional method to allow modules to retrieve global constants before 
         scoping is used. Must use tf.get_variable.

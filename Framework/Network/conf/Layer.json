@@ -1,0 +1,18 @@
+{
+	"defaults": {
+		"activation": null, 
+		"name": null, 
+		"batchsize": null
+	}, 
+
+	"types": {
+		"activation": "activation_type", 
+		"name": "str", 
+		"batchsize": "int"
+	}, 
+	
+	"requirements": [
+		"activation", 
+		"batchsize"
+	]
+}

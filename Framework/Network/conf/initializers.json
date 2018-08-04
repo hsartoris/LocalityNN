@@ -1,0 +1,12 @@
+{
+	"zeros" : "tensorflow.initializers.zeros",
+	"ones" : "tensorflow.initializers.ones",
+	"constant" : "tensorflow.initializers.constant",
+	"random_uniform" : "tensorflow.initializers.random_uniform",
+	"random_normal" : "tensorflow.initializers.random_normal",
+	"truncated_normal" : "tensorflow.initializers.truncated_normal",
+	"uniform_unit_scaling" : "tensorflow.initializers.uniform_unit_scaling",
+	"variance_scaling" : "tensorflow.initializers.variance_scaling",
+	"orthogonal" : "tensorflow.initializers.orthogonal",
+	"identity" : "tensorflow.initializers.identity"
+}

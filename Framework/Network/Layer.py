@@ -1,6 +1,6 @@
 from .AbstractLayer import AbstractLayer
 import tensorflow as tf
-from typing import Callable, Dict
+from typing import Callable, Dict, List, Tuple
 
 class Layer(AbstractLayer):
     # TODO: more documentation
@@ -19,11 +19,12 @@ class Layer(AbstractLayer):
         Note that the parameters specified here are only those global to all 
         layer modules.
         """
-        self._module: AbstractLayer = module(inputs,
-                                        activation,
-                                        name,
-                                        batchsize,
-                                        params)
+        self._load_config()
+        #self._module: AbstractLayer = module(inputs,
+        #                                activation,
+        #                                name,
+        #                                batchsize,
+        #                                params)
 
     def get_default_params(self) -> Dict[str, any]:
         """Retrieves parameters, including applicable defaults, from the current 
@@ -32,6 +33,10 @@ class Layer(AbstractLayer):
         Implemented on module.
         """
         return self._module._get_default_params()
+
+    def get_required_params(self) -> List[str]:
+        """Retrieves required parameters for module."""
+        return self._module.required_params()
 
     def get_params(self) -> Dict[str, any]:
         """Retrieves currend module parameters.

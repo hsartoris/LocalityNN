@@ -1,0 +1,25 @@
+{
+	"defaults": {
+		"batchsize": 1,
+		"inputs_dims": null,
+		"train_steps": null,
+		"validate_steps": null,
+		"save_ckpt": null,
+		"save_dir": null,
+		"debug": true
+	},
+	"types": {
+		"batchsize": "int",
+		"inputs_dims": "tuple",
+		"train_steps": "int",
+		"validate_steps": "int",
+		"save_ckpt": "bool",
+		"save_dir": "str",
+		"debug": "bool"
+	},
+	"requirements": [
+		"inputs_dims",
+		"train_steps",
+		"layers"
+	]
+}

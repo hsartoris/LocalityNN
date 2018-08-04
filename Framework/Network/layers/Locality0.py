@@ -1,8 +1,8 @@
 from ..AbstractLayer import AbstractLayer
-from ..utils import make_expand
+from ..util import make_expand
 import tensorflow as tf
 import numpy as np
-from typing import Dict, Callable, List
+from typing import Dict, Callable, List, Tuple
 
 class Locality0(AbstractLayer):
     """Modular implementation of first locality-based layer.
@@ -20,45 +20,9 @@ class Locality0(AbstractLayer):
         stddev_b: float - standard deviation of bias matrices
         weight_initializer: tf.keras.initializers.Initializer
         bias_initializer: tf.keras.initializers.Initializer
-        expand: (n x n^2) matrix to expand by duplicating columns
 
     """
     # TODO: add explanation of what the hell it actually does.
-
-    @classmethod
-    def _get_default_params(cls) -> Dict[str,any]:
-        """Returns default parameters for this layer module."""
-        return {
-                'd': None, # must be provided
-                'batchsize': 1,
-                'stddev_w': .25,
-                'stddev_b': .25,
-                'weight_initializer': tf.random_normal_initializer,
-                'bias_initializer': tf.random_normal_initializer,
-                'expand': None # must be provided
-                }
-
-    def _get_global_constants(self) -> None:
-        """Gets or creates `expand` matrix.
-        
-        Because multiple `expand` matrices may eventually exist, the global name 
-        is expandN, where N is the base number of nodes defining the size.
-        """
-        with tf.variable_scope(tf.get_variable_scope(), reuse=True):
-            # at this point _setup has not been called, so we pull the number of 
-            # neurons from self.input_shape
-            self.n: int = self.input_shape[2]
-            self.expand: tf.Tensor = tf.get_variable(
-                    "expand" + str(self.input_shape[2]),
-        
-
-    def _validate_params(self) -> None:
-        # has d been provided
-        if self.params['d'] is None or type(self.params['d']) is not int:
-            raise AttributeError("""First output dimension `d` is not provided 
-                    or is not an integer.""")
-
-
 
     def _setup(self) -> None:
         """Uses input dimensions to instantiate weight and bias matrices, as 
@@ -80,9 +44,6 @@ class Locality0(AbstractLayer):
         self.B: tf.Tensor = tf.get_variable("biases", shape=(1, self.d, 1),
                 dtype = self.dtype,
                 initializer = self.params['bias_initializer'])
-
-        self.expand: tf.Tensor = self.params['expand']
-
 
     def _layer_ops(self) -> tf.Tensor:
         """Returns input data with locality operations applied to it.
@@ -109,4 +70,44 @@ class Locality0(AbstractLayer):
         # return biased values with activation applied
         return self.activation(bias_out)
 
+    #@classmethod
+    #def _get_default_params(cls) -> Dict[str,Tuple[any, type]]:
+    #    """Returns default parameters for this layer module."""
+    #    return {
+    #            'd': (None, int), # must be provided
+    #            'batchsize': (1, int),
+    #            'stddev_w': (.25, float),
+    #            'stddev_b': (.25, float),
+    #            'weight_initializer': (tf.random_normal_initializer, 
+    #                tf.keras.initializers.Initializer),
+    #            'bias_initializer': (tf.random_normal_initializer,
+    #                tf.keras.initializers.Initializer)
+    #            }
 
+    def _get_global_constants(self) -> None:
+        """Gets or creates `expand` matrix.
+        
+        Because multiple `expand` matrices may eventually exist, the global name 
+        is expandN, where N is the base number of nodes defining the size.
+        """
+        # at this point _setup has not been called, so we pull the number of 
+        # neurons from self.input_shape
+        self.n: int = self.input_shape[2]
+        with tf.variable_scope(tf.get_variable_scope(), reuse=tf.AUTO_REUSE):
+            self.expand: tf.Tensor = tf.get_variable(
+                    "expand" + str(self.input_shape[2]),
+                    shape = (self.n, self.n * self.n),
+                    dtype = self.dtype,
+                    initializer = tf.constant_initializer(make_expand(self.n))
+                    )
+        
+    def _validate_params(self) -> None:
+        # has d been provided
+        if self.params['d'] is None or type(self.params['d']) is not int:
+            raise AttributeError("""First output dimension `d` is not provided 
+                    or is not an integer.""")
+
+    def required_params(self) -> List[str]:
+        """Returns keys in `params` dict for which values must be provided.
+        """
+        return ['d']

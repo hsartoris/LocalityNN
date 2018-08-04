@@ -1,0 +1,24 @@
+{
+	"defaults": {
+		"d": null,
+		"batchsize": null,
+		"stddev_w": 0.25,
+		"stddev_b": 0.25,
+		"weight_initializer": "RandomNormal",
+		"bias_initializer": "RandomNormal"
+	},
+
+	"types": {
+		"d": "int",
+		"batchsize": "int",
+		"stddev_w": "float",
+		"stddev_b": "float",
+		"weight_initializer": "Initializer",
+		"bias_initializer": "Initializer"
+	},
+	
+	"requirements": [
+		"d",
+		"batchsize"
+	]
+}

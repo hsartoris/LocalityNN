@@ -6,10 +6,10 @@ import tensorflow as tf
 d = 3
 inputs = tf.placeholder(tf.float32, shape=(1,4,3))
 expand = make_expand(3)
-print(expand.get_shape())
+print(expand.shape)
 
 l = Layer(Locality0, inputs, tf.nn.relu, batchsize = 1,
-        params = {'expand': expand, 'd': d})
+        params = {'d': d}, name="test")
 out = l.outputs()
 print(out.get_shape().as_list())
 
