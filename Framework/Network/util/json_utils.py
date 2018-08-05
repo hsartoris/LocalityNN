@@ -37,9 +37,10 @@ class ArrayEncoder(json.JSONEncoder):
             if item == activation_type:
                 # activation function types are awful
                 return activation_type_enc
-            if isinstance(item, Callable):
-                # in general we'll represent Callables with their names
-                return item.__name__
+            # testing to see what exactly can and can't be encoded
+            #if isinstance(item, Callable):
+            #    # in general we'll represent Callables with their names
+            #    return item.__name__
             return item
 
         return super(ArrayEncoder, self).encode(hint_stuff(obj))

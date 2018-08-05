@@ -1,14 +1,13 @@
-from ..common import Parameterizable
 from importlib import import_module
 from .Layer import Layer
 from .util import encode_json, JSONDecoder
 import tensorflow as tf
 from typing import Dict, List
-import layers as layer_modules
+#import layers as layer_modules
 
 confdir: str = "conf/"
 
-class NetworkBuilder(Parameterizable):
+class NetworkBuilder(object):
     """Constructs a network based on the parameters specified in the provided 
     JSON file.
 
