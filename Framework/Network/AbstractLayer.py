@@ -28,29 +28,6 @@ class AbstractLayer(ABC):
     
     """
 
-    # TODO: this is hacky
-    general_conf_name: str = "AbstractLayer"
-
-    @classmethod
-    def set_class_defaults(cls, conf: Dict[str, any]) -> None:
-        """Allows managing class, likely NetworkBuilder, to pass in the defaults 
-        for the class, which are stored in conf/<layer>.json
-
-        This method does basic validation of the config as passed in.
-        """
-        # TODO: ABSTRACT INTO CONF HANDLER OBJECT.
-
-        # to summarize, if we get here, the following is true:
-        #   1. the sections defined in the config are exactly the required 3
-        #   2. the items in the three sections are Dict, Dict, List
-        #   3. the params defined in `defaults` and `types` are equivalent
-        #   4. any required params are defined in `defaults` and `types`
-        # now we just store the variables and we're done
-        cls.default_params: Dict[str, any] = defaults
-        cls.param_types: Dict[str, type] = types
-        cls.reqd_params: List[str] = reqs
-
-
     def __init__(self, inputs: tf.Tensor, params: Dict) -> None:
         # compare provided params against defaults
         self._validate_params(params)

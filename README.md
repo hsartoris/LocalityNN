@@ -48,3 +48,6 @@ the READMEs in `Framework/Generator/` and `Framework/Simulator/`
 TODO
 ---
 Add accessory modules to simulator for noise introduction etc
+
+Refactor entire Network section into python configuration files, not JSON, 
+doofus
