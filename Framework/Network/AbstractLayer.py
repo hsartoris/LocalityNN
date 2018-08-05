@@ -1,10 +1,11 @@
+from abc import ABC, abstractmethod
 import tensorflow as tf
 from typing import List, Callable, Dict, Tuple
 from .util import JSONDecoder, encode_json
 
 confdir = "conf/"
 
-class AbstractLayer(object):
+class AbstractLayer(ABC):
     """Abstract class for wrapping layer ops into a full layer.
 
     Does not use Parameterizable because Tensorflow graphs might as well be 
@@ -27,6 +28,9 @@ class AbstractLayer(object):
     
     """
 
+    # TODO: this is hacky
+    general_conf_name: str = "AbstractLayer"
+
     @classmethod
     def set_class_defaults(cls, conf: Dict[str, any]) -> None:
         """Allows managing class, likely NetworkBuilder, to pass in the defaults 
@@ -35,29 +39,6 @@ class AbstractLayer(object):
         This method does basic validation of the config as passed in.
         """
         # TODO: ABSTRACT INTO CONF HANDLER OBJECT.
-        keys: List[str] = ["defaults", "types", "requirements"]
-        if not set(keys) == set(conf):
-            # set(dict) gives the keys as a set
-            raise AttributeError("Error in top level of config for " + 
-                    cls.__name__ + ". Check that headings contain exactly " + 
-                    str(keys))
-        
-        defaults: Dict[str, any] = conf[keys[0]]
-        types: Dict[str, type] = conf[keys[1]]
-        reqs: List[str] = conf[keys[2]]
-        assert(isinstance(defaults, dict))
-        assert(isinstance(types, dict))
-        assert(isinstance(reqs, list))
-
-        if not set(defaults) == set(types):
-            # all params should have a default value and a type
-            raise AttributeError("Not all parameters defined in the conf for " + 
-                    cls.__name__ + " have both default values and types.")
-
-        if not set(reqs).issubset(set(defaults)):
-            # any keys defined as required must of course be in the parameters
-            raise AttributeError("One or more requirements in the conf for " +
-                    cls.__name__ + " are not present in defaults/types.")
 
         # to summarize, if we get here, the following is true:
         #   1. the sections defined in the config are exactly the required 3
@@ -107,7 +88,7 @@ class AbstractLayer(object):
             self.outputs: tf.Tensor = self._layer_ops()
 
     @classmethod
-    def load_config(cls) -> None:
+    def load_config(cls, genl_conf = general_conf_name) -> None:
         # load configuration information without instantiating
         if not hasattr(cls, "defaults"):
             cls.json_decoder: JSONDecoder = JSONDecoder()
@@ -125,12 +106,14 @@ class AbstractLayer(object):
         cls._load_config()
         return cls.defaults
 
+    @abstractmethod
     def _get_global_constants(self) -> None:
         """Optional method to allow modules to retrieve global constants before 
         scoping is used. Must use tf.get_variable.
         """
         pass
 
+    @abstractmethod
     def _setup(self) -> None:
         """Any operations that should be run before _layer_ops. Optional.
 
@@ -138,12 +121,9 @@ class AbstractLayer(object):
         """
         pass
 
-
+    @abstractmethod
     def _layer_ops(self) -> tf.Tensor:
         """Responsible for actual layer computations.
 
         Must be overridden by child classes.
         """
-        raise NotImplementedError
-
-    

@@ -80,3 +80,65 @@ def encode_json(inputs: Union[dict, list]) -> str:
     enc: ArrayEncoder = ArrayEncoder()
     return enc.encode(inputs)
 
+class LayerConfig(object):
+    """Container for layer configuration dicts. Performs general validation.
+    """
+
+    CONFIG_TYPE: type = Tuple[Dict[str, any], Dict[str, type], List[str]]
+
+    def __init__(self, config1: CONFIG_TYPE,
+            config2: CONFIG_TYPE = None) -> None:
+        """Accepts one or two config files. If two, validates files and then 
+        combines.
+
+        Configs should not have overlapping values.
+        """
+        self.validate_config(config1)
+       
+    def validate_config(conf: CONFIG_TYPE, default_conf: bool = False) -> None:
+        """Checks to ensure config is consistent.
+
+        Also checks types using provided method.
+        """
+
+        defaults: Dict[str, any]
+        types: Dict[str, type]
+        reqs: List[str]
+
+        defaults, types, reqs = conf
+        
+        if not set(defaults) == set(types):
+            # all params should have a default value and a type
+            raise AttributeError("Not all parameters defined in the conf for " + 
+                    cls.__name__ + " have both default values and types.")
+
+        # lazy typecheck this, because
+        _typecheck(defaults, types, None if default_conf else reqs)
+
+        if not set(reqs).issubset(set(defaults)):
+            # any keys defined as required must of course be in the parameters
+            raise AttributeError("One or more requirements in the conf for " +
+                    cls.__name__ + " are not present in defaults/types.")
+
+    def _typecheck(defaults: Dict[str, any], types: Dict[str, type], 
+            requirements: List[str] = None) -> None:
+        """Checks config types. Assumes general validation has taken place in 
+        validate_config.
+
+        If requirements are provided, enforces requirements being instantiated.
+        """
+        check_reqs: bool = requirements is not None
+
+        for key, value in defaults:
+            if value is None:
+                if check_reqs and key in requirements:
+                    raise AttributeError("Required parameter " + key +
+                            " must be instantiated with type " + str(types[key]) 
+                            + " but is None.")
+            else:
+                if not type(value) == types[key]:
+                    raise AttributeError("Parameter " + key + " requires type " 
+                            + str(types[key]) + " but is type " + 
+                            str(type(value)))
+
+        
