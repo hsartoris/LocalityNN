@@ -1,9 +1,7 @@
 from abc import ABC, abstractmethod
 import tensorflow as tf
 from typing import List, Callable, Dict, Tuple
-from .util import JSONDecoder, encode_json
-
-confdir = "conf/"
+from .util import types
 
 class AbstractLayer(ABC):
     """Abstract class for wrapping layer ops into a full layer.
@@ -15,16 +13,6 @@ class AbstractLayer(ABC):
 
     Any and all calls to create variables in these methods should use 
     tf.get_variable, to maintain name scoping.
-
-    `__init__` does not provide default values. Those are provided by the 
-    wrapper class, Layer.
-
-    Before using a module, load its default configuration from 
-    conf/<layername>.json, using util.JSONDecoder. Then pass the resulting 
-    object to set_class_defaults. No values are stored in the code itself, and 
-    skipping this step will result in failure to initialize the model later.
-
-    TODO: just make this a method on the class
     
     """
 
@@ -65,23 +53,36 @@ class AbstractLayer(ABC):
             self.outputs: tf.Tensor = self._layer_ops()
 
     @classmethod
-    def load_config(cls, genl_conf = general_conf_name) -> None:
-        # load configuration information without instantiating
-        if not hasattr(cls, "defaults"):
-            cls.json_decoder: JSONDecoder = JSONDecoder()
-            with open(cls.confdir + cls.__name__ + ".json") as f:
-                params: Dict[str, any] = cls.json_decoder.load_json(f)
-            cls.defaults: Dict[str, any] = params['defaults']
-            cls.types: Dict[str, type] = params['types']
-            cls.requirements: List[str] = params['requirements']
+    def _base_default_params(cls) -> types.params:
+        """Return dict of default parameters common to all layers.
+
+        Return type, defined in util/types.py, is Dict[str,Tuple[any,type,bool]]
+
+        Format: { <key> : (<default_value>, <param_type>, <is_required>) }
+        """
+        return {
+                "activation" : (None, types.activation, True),
+                "name" : (None, str, False),
+                "batchsize" : (None, int, True)
+                }
 
     @classmethod
-    def _get_default_params(cls) -> Dict[str, any]:
-        """Load config file for module. Should obviate implementing this method 
-        on individual modules.
+    @abstractmethod
+    def _layer_default_params(cls) -> types.params:
+        """Implemented by child class to report its individual default 
+        parameters.
         """
-        cls._load_config()
-        return cls.defaults
+
+    @classmethod
+    def get_default_parameters(cls) -> types.params:
+        """Public method to get all parameters for layer, including inherited.
+        """
+        base_params: types.params = cls._base_default_params()
+        layer_params: types.params = cls._layer_default_params()
+        # combine and return dictionaries
+        return {**base_params, **layer_params}
+
+
 
     @abstractmethod
     def _get_global_constants(self) -> None:

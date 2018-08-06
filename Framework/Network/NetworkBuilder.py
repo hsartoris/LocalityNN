@@ -1,6 +1,5 @@
 from importlib import import_module
 from .Layer import Layer
-from .util import encode_json, JSONDecoder
 import tensorflow as tf
 from typing import Dict, List
 #import layers as layer_modules
