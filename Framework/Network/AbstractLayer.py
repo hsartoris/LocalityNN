@@ -7,8 +7,9 @@ class AbstractLayer(ABC):
 
     """
 
-    def __init__(self, params: Dict[str, any] = None,
+    def __init__(self, inputs: tf.Tensor, params: Dict[str, any] = None,
             parent_params: Dict[str, any] = None):
+        self.inputs: tf.Tensor = inputs
 
         # load default params for class and check that defaults/types contain 
         # same params
@@ -27,9 +28,10 @@ class AbstractLayer(ABC):
         self._check_params()
         
         self._setup()
+        self.outputs: tf.Tensor = self._compute_layer_ops()
 
     @abstractmethod
-    def compute_layer_ops(self, inputs: tf.Tensor) -> tf.Tensor:
+    def _compute_layer_ops(self) -> tf.Tensor:
         """Actual layer computations performed here.
         """
 

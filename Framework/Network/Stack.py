@@ -43,8 +43,18 @@ class Stack(AbstractLayer):
             print("Layer name:", layer_name, "\nLayer module:", 
                     layer_module.__name__)
 
-        with tf.variable_scope(layer_name):
-            self.layers.append(layer_module(params = layer_conf_dict,
+        # get layer inputs
+        layer_inputs: tf.Tensor
+        if len(self.layers) == 0:
+            # first layer
+            layer_inputs = self.inputs
+        else:
+            # subsequent layers
+            layer_inputs = self.layers[-1].outputs
+
+        with tf.variable_scope(layer_name, reuse = tf.AUTO_REUSE):
+            self.layers.append(layer_module(layer_inputs,
+                                            params = layer_conf_dict,
                                             parent_params = self.params))
 
         if hasattr(self.layers[-1], "name"):
@@ -75,19 +85,8 @@ class Stack(AbstractLayer):
             assert(isinstance(layer_conf, tuple))
             self.params['layers'][i] = self.add_layer(layer_conf)
 
-    def compute_layer_ops(self, inputs: tf.Tensor) -> tf.Tensor:
-        self.inputs: tf.Tensor = inputs
-        for i in range(len(self.layers)):
-            with tf.variable_scope(self.layers[i].name):
-                if i == 0:
-                    self.layers[i].outputs = \
-                        self.layers[i].compute_layer_ops(self.inputs)
-                else:
-                    self.layers[i].outputs = \
-                            self.layers[i].comput_layer_ops(
-                                    self.layers[i-1].outputs)
+    def _compute_layer_ops(self) -> tf.Tensor:
         return self.layers[-1].outputs
-
 
     def generate_config(self) -> str:
         print(names)

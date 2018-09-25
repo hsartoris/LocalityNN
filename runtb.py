@@ -1,0 +1,11 @@
+import tensorflow as tf
+from tensorboard import main as tb
+import sys
+
+if not len(sys.argv) == 2:
+    print("Requires one argument, logdir")
+    sys.exit()
+
+print("using logdir " + sys.argv[1])
+tf.flags.FLAGS.logdir = sys.argv[1]
+tb.main()

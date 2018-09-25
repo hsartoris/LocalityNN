@@ -7,22 +7,27 @@ from typing import Dict, Callable, List, Tuple
 class Locality0(AbstractLayer):
     """Modular implementation of first locality-based layer.
 
-    Expected inputs are matrices of shape (timesteps x num_neurons), from which 
-    the layer will derive most of its dimensionality.
+    Expected inputs are matrices of shape (batchsize x timesteps x num_neurons), 
+    from which the layer will derive most of its dimensionality.
 
     If using a batchsize of 1, the layer will still expect the inputs to have an 
-    extra dimesion of size 1.
+    extra dimension of size 1.
 
     Parameters:
+        input_shape: Tuple[int,int,int] - dimensions of input data
         d: int - chosen output depth. Defaults to timesteps/2
         batchsize: int - number of samples per batch
         stddev_w: float - standard deviation of weight matrices
         stddev_b: float - standard deviation of bias matrices
         weight_initializer: tf.keras.initializers.Initializer
         bias_initializer: tf.keras.initializers.Initializer
+        dtype: type - type of input data
 
     """
     # TODO: add explanation of what the hell it actually does.
+
+    # TODO: actually use standard deviation and rename initializer parameters to 
+    # match convention
 
     def _setup(self) -> None:
         """Uses input dimensions to instantiate weight and bias matrices, as 
@@ -59,11 +64,10 @@ class Locality0(AbstractLayer):
                     initializer = tf.constant_initializer(make_expand(self.n))
                     )
 
-    def compute_layer_ops(self, inputs: tf.Tensor) -> tf.Tensor:
+    def _compute_layer_ops(self) -> tf.Tensor:
         """Returns input data with locality operations applied to it.
         """
         self.batchsize: int = self.params['batchsize']
-        self.inputs: tf.Tensor = inputs
         # TODO: potentially scope this better
 
         # expand data by duplicating columns side by side
