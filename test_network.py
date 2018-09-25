@@ -1,18 +1,21 @@
-from Framework.Network import Layer
+from Framework.Network.Stack import Stack
 from Framework.Network.layers import Locality0
-from Framework.Network.utils import make_expand
-import tensorflow as tf
 
 d = 3
-inputs = tf.placeholder(tf.float32, shape=(1,4,3))
-expand = make_expand(3)
-print(expand.shape)
+#inputs = tf.placeholder(tf.float32, shape=(1,4,3))
+#expand = make_expand(3)
+#print(expand.shape)
 
-l = Layer(Locality0, inputs, tf.nn.relu, batchsize = 1,
-        params = {'d': d}, name="test")
-out = l.outputs()
-print(out.get_shape().as_list())
+stack_params = {
+        'batchsize': 1,
+        'input_dims': (1,1,1),
+        'layers': [
+            (Locality0, 'test', {
+                    'd': 3,
+                    'input_shape': (1,1,1)
+                }
+                )
+            ]
+        }
 
-with tf.Session() as sess:
-    writer = tf.summary.FileWriter('testlogs', sess.graph)
-    writer.close()
+s = Stack(stack_params)

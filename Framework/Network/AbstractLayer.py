@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-#import tensorflow as tf
+import tensorflow as tf
 from typing import List, Callable, Dict, Tuple
 
 class AbstractLayer(ABC):
@@ -18,7 +18,7 @@ class AbstractLayer(ABC):
 
         # if parent params are provided, override defaults
         if parent_params is not None:
-            self._override_params(parent_params)
+            self._override_params(parent_params, strict = False)
 
         # if layer-specific params are provided, override parent and defaults
         if params is not None:
@@ -26,10 +26,16 @@ class AbstractLayer(ABC):
 
         self._check_params()
         
-        self.setup()
+        self._setup()
 
     @abstractmethod
-    def setup(self):
+    def compute_layer_ops(self, inputs: tf.Tensor) -> tf.Tensor:
+        """Actual layer computations performed here.
+        """
+
+
+    @abstractmethod
+    def _setup(self):
         """Operations for building the layer should be built here.
         """
 
@@ -52,12 +58,15 @@ class AbstractLayer(ABC):
                         str(self.param_types[key]))
 
         
-    def _override_params(self, new_params: Dict[str, any]) -> None:
+    def _override_params(self, new_params: Dict[str, any],
+            strict: bool = True) -> None:
+
         for key in new_params:
             if key not in self.params:
-                raise Exception("Provided parameter " + key +
+                if strict:
+                    raise Exception("Provided parameter " + key +
                         " is not supported on this module.")
-
+                else: continue
             self.params[key] = new_params[key]
 
     @classmethod

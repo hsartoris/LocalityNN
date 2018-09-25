@@ -1,0 +1,48 @@
+Okay, on the topic of architecture:
+
+One issue facing machine learning is that seemingly different architectures can 
+produce similar results only through optimization of hyperparameters (relevant 
+paper: https://arxiv.org/abs/1711.10337). Additionally, it's almost impossible 
+to comprehend how exactly models reach their conclusions due to the galaxy of 
+values each network contains. I see these issues (and others) as symptoms of a 
+larger problem having to do with network architecture.
+
+The (unproven and mostly intuitive) principle behind my thought is this: if you 
+have a collection of configurable computational units and connections between 
+those units (nodes and edges in a neural net), and an algorithm that optimizes 
+all configurable parameters to move towards good results (gradient descent), 
+then most problems are probably tractable given enough computation units and a 
+well-configured algorithm. This would basically amount to brute-forcing a 
+problem by training a neural network comprised of only all-to-all connected 
+layers. The key is this: when training is complete, the network may produce 
+appropriate results, but the computational power required to produce those 
+results will certainly be much higher than necessary because the network will 
+have had to learn how to specialize itself to the data provided; in other words, 
+some (usually significant) fraction of total computation power will necessarily 
+be dedicated to operations not directly applicable to processing the inputs.
+
+Of course, no one really does this, since most input data can be optimized for 
+at least a little; think only of the reduction in duplicate computations 
+achieved by convolutional networks for image processing. However, when you put 
+together a massive number of specialized components to create a network, such as 
+is usually seen in releases from Google etc., to me that looks like a retreat in 
+the direction of the brute force baseline. This intuition is corroborated by the 
+fact that different complex network structures can achieve similar results, 
+seemingly implying that the directly relevant 'core' computations required to 
+solve a problem may only comprise some subset of the available computational 
+units, with the rest dedicated to interfacing between the structure of the 
+network and the structure of the input data.
+
+This is important because it suggests that, despite claims that network 
+structures are specified to the problem at hand, they are yet not specific 
+enough to eliminate unecessary computational overhead. Moreover, it legitimizes 
+our approach: we are working with a computational structure so highly specified 
+to the task at hand that the operational layers must be implemented from the 
+ground up, and our actual computational requirements are miniscule compared to 
+even simple toy networks.
+
+In other words, if our approach works well, and in particular if we can 
+understand *why* it works, it could represent a serious accomplishment in ML in 
+general: an aggressively bottom-up approach leading to a structure so uniquely 
+suited to its input data that nearly all extraneous computation is eliminated, 
+leaving only the most critical sections to be learned.

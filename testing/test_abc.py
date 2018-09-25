@@ -7,6 +7,7 @@ class t(ABC):
         self.x = self.nx3(n)
 
     @classmethod
+    @abstractmethod
     def nx3(cls, n):
         return n * 3
 
@@ -19,4 +20,7 @@ class t(ABC):
         print(test)
 
 class t2(t):
-    pass
+    @classmethod
+    def nx3(cls, n):
+        return super().nx3(n)*n
+
