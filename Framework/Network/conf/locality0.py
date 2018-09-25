@@ -1,4 +1,5 @@
 from typing import Dict, List
+from ..tf_names import *
 import tensorflow as tf
 
 param_defaults: Dict[str, any] = {
@@ -7,8 +8,8 @@ param_defaults: Dict[str, any] = {
         'batchsize': 1,
         'stddev_w': .25,
         'stddev_b': .25,
-        'weight_initializer': tf.random_normal_initializer,
-        'bias_initializer': tf.random_normal_initializer,
+        'weight_initializer': random_normal,
+        'bias_initializer': random_normal,
         'dtype': tf.float32
         }
 
