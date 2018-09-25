@@ -10,6 +10,7 @@ param_defaults: Dict[str, any] = {
         'stddev_b': .25,
         'weight_initializer': random_normal,
         'bias_initializer': random_normal,
+        'activation': relu,
         'dtype': tf.float32
         }
 
@@ -23,6 +24,7 @@ param_types: Dict[str, type] = {
         #'bias_initializer': tf.keras.initializers.Initializer
         'weight_initializer': type,
         'bias_initializer': type,
+        'activation': type(relu),
         'dtype': type(tf.int32)
         }
 

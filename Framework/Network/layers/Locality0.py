@@ -62,6 +62,7 @@ class Locality0(AbstractLayer):
     def compute_layer_ops(self, inputs: tf.Tensor) -> tf.Tensor:
         """Returns input data with locality operations applied to it.
         """
+        self.batchsize: int = self.params['batchsize']
         self.inputs: tf.Tensor = inputs
         # TODO: potentially scope this better
 
@@ -83,23 +84,9 @@ class Locality0(AbstractLayer):
         bias_out: tf.Tensor = tf.add(conv_out, bias_tile)
 
         # return biased values with activation applied
-        return self.activation(bias_out)
+        return self.params['activation'](bias_out)
 
     @classmethod
     def _import_default_params(cls) -> object:
         from ..conf import locality0
         return locality0
-
-    #@classmethod
-    #def _get_default_params(cls) -> Dict[str,Tuple[any, type]]:
-    #    """Returns default parameters for this layer module."""
-    #    return {
-    #            'd': (None, int), # must be provided
-    #            'batchsize': (1, int),
-    #            'stddev_w': (.25, float),
-    #            'stddev_b': (.25, float),
-    #            'weight_initializer': (tf.random_normal_initializer, 
-    #                tf.keras.initializers.Initializer),
-    #            'bias_initializer': (tf.random_normal_initializer,
-    #                tf.keras.initializers.Initializer)
-    #            }

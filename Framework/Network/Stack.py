@@ -75,8 +75,19 @@ class Stack(AbstractLayer):
             assert(isinstance(layer_conf, tuple))
             self.params['layers'][i] = self.add_layer(layer_conf)
 
-    def compute_layer_ops(self) -> tf.Tensor:
-        pass
+    def compute_layer_ops(self, inputs: tf.Tensor) -> tf.Tensor:
+        self.inputs: tf.Tensor = inputs
+        for i in range(len(self.layers)):
+            with tf.variable_scope(self.layers[i].name):
+                if i == 0:
+                    self.layers[i].outputs = \
+                        self.layers[i].compute_layer_ops(self.inputs)
+                else:
+                    self.layers[i].outputs = \
+                            self.layers[i].comput_layer_ops(
+                                    self.layers[i-1].outputs)
+        return self.layers[-1].outputs
+
 
     def generate_config(self) -> str:
         print(names)
