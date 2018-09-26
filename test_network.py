@@ -10,7 +10,7 @@ d = 3
 #print(expand.shape)
 
 stack_params = {
-        'layers': [(Locality0, {'d': 3}),
+        'layers': [(Locality0, {'d': 6}),
             Locality1,
             Locality1,
             Flatten

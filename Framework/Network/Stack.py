@@ -63,7 +63,7 @@ class Stack(AbstractLayer):
         layer_conf_dict['input_shape'] = \
             tuple(layer_inputs.get_shape().as_list())
 
-        with tf.variable_scope(layer_name, reuse = tf.AUTO_REUSE):
+        with tf.variable_scope(layer_name):
             self.layers.append(layer_module(layer_inputs,
                                             params = layer_conf_dict,
                                             parent_params = self.params))

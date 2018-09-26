@@ -13,7 +13,7 @@ network_params = {
         'layers': [
             (Locality0, 'Locality0',
                 {
-                    'd': 3,
+                    'd': 6,
                     'input_shape': (1, 2, 3),
                     'batchsize': 1,
                     'stddev_w': 0.25,
@@ -26,7 +26,7 @@ network_params = {
             ),
             (Locality1, 'Locality1',
                 {
-                    'input_shape': (1, 3, 9),
+                    'input_shape': (1, 6, 9),
                     'batchsize': 1,
                     'activation': relu,
                     'dtype': tf.float32,
@@ -44,7 +44,7 @@ network_params = {
             ),
             (Locality1, 'Locality1',
                 {
-                    'input_shape': (1, 3, 9),
+                    'input_shape': (1, 6, 9),
                     'batchsize': 1,
                     'activation': relu,
                     'dtype': tf.float32,
@@ -62,7 +62,7 @@ network_params = {
             ),
             (Flatten, 'Flatten',
                 {
-                    'input_shape': (1, 3, 9),
+                    'input_shape': (1, 6, 9),
                     'stddev_w': 1.0,
                     'initializer_w': random_normal,
                     'activation': None,
