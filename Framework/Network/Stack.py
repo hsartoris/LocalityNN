@@ -33,6 +33,12 @@ class Stack(AbstractLayer):
             assert(isinstance(layer_conf[1], str))
             layer_name = layer_conf[1]
 
+        # check whether or not the name has already been used
+        for oldlayer in self.layers:
+            if oldlayer.name == layer_name:
+                if self.debug: print("Layer name overlap: " + layer_name)
+                layer_name += "_0"
+
         # is the third item a dict?
         assert(isinstance(layer_conf[2], dict))
         layer_conf_dict: dict = layer_conf[2]

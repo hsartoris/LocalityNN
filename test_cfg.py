@@ -42,7 +42,7 @@ network_params = {
                     'initializer_w2': None,
                 }
             ),
-            (Locality1, 'Locality1',
+            (Locality1, 'Locality1_0',
                 {
                     'input_shape': (1, 6, 9),
                     'batchsize': 1,
