@@ -145,6 +145,9 @@ class Locality1(AbstractLayer):
         # return biased outputs after activation
         return self.activation(post_bias)
 
+    def output_shape(self) -> Tuple[int, int, int]:
+        return self.input_shape
+
     @classmethod
     def _import_default_params(cls) -> object:
         from ..conf import locality1

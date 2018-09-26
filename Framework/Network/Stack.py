@@ -52,6 +52,10 @@ class Stack(AbstractLayer):
             # subsequent layers
             layer_inputs = self.layers[-1].outputs
 
+        # TODO: some kinda checking here
+        layer_conf_dict['input_shape'] = \
+            tuple(layer_inputs.get_shape().as_list())
+
         with tf.variable_scope(layer_name, reuse = tf.AUTO_REUSE):
             self.layers.append(layer_module(layer_inputs,
                                             params = layer_conf_dict,
@@ -76,14 +80,26 @@ class Stack(AbstractLayer):
         self.layers: List[AbstractLayer] = []
         for i in range(len(self.params['layers'])):
             layer_conf = self.params['layers'][i]
+            layer_tup: tuple
             if not isinstance(layer_conf, tuple):
-                raise Exception("""Layer configs for Stack should be a 
-                Tuple[AbstractLayer, str, Dict[str, any]] of the form (<module>, 
-                <name>, <layer params>.""")
+                # assume it's just a module
+                layer_tup = (layer_conf, None, dict())
+            elif len(layer_conf) == 2:
+                # skipped either dict or name
+                if isinstance(layer_conf[1], dict):
+                    # skipped name
+                    layer_tup = (layer_conf[0], None, layer_conf[1])
+                else:
+                    # skipped dict
+                    layer_tup = (layer_conf[0], layer_conf[1], dict())
+            else:
+                # complete config tuple
+                layer_tup = layer_conf
+            self.params['layers'][i] = self.add_layer(layer_tup)
 
-            # just in case mypy is picky
-            assert(isinstance(layer_conf, tuple))
-            self.params['layers'][i] = self.add_layer(layer_conf)
+
+    def output_shape(self) -> Tuple[int, int, int]:
+        return tuple(self.layers[-1].get_shape().as_list())
 
     def _compute_layer_ops(self) -> tf.Tensor:
         return self.layers[-1].outputs

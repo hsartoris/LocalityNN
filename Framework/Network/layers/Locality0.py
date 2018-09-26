@@ -90,6 +90,9 @@ class Locality0(AbstractLayer):
         # return biased values with activation applied
         return self.params['activation'](bias_out)
 
+    def output_shape(self) -> Tuple[int,int,int]:
+        return (self.input_shape[0], self.d, self.n * self.n)
+
     @classmethod
     def _import_default_params(cls) -> object:
         from ..conf import locality0

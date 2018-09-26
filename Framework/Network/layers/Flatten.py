@@ -33,6 +33,9 @@ class Flatten(AbstractLayer):
         else:
             return outputs
 
+    def output_shape(self) -> Tuple[int, int, int]:
+        return (self.params['input_shape'][0], 1, self.params['input_shape'][2])
+
     @classmethod
     def _import_default_params(cls) -> object:
         from ..conf import flatten
