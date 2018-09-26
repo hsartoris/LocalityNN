@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 import tensorflow as tf
 from typing import List, Callable, Dict, Tuple
+from .tf_names import *
 
 class NetworkModule(ABC):
     """Abstract class implementing parameterization for Network modules.
@@ -32,6 +33,35 @@ class NetworkModule(ABC):
     def _setup(self):
         """Operations for building the layer should be built here.
         """
+
+    def _generate_config(self, indent_level: int = 0, skip: str = None) -> str:
+        sp: int = indent_level * 4
+        conf: str = ""
+        for key in self.params:
+            if key == skip: continue
+            conf += " "*sp + "'" + key + "': "
+            conf += self.get_str(self.params[key]) + ",\n"
+        return conf
+
+    def generate_config(self, indent_level: int = 0) -> str:
+        """Generates config dict items for layer.
+        Does not include braces at beginning and end.
+        """
+        return self._generate_config(indent_level)
+
+
+    @classmethod
+    def get_str(cls, conf_item: any) -> str:
+        # this is pretty bad lol
+        if hasattr(conf_item, "real_dtype"):
+            #tf dtype
+            return "tf." + conf_item.name
+        if conf_item in names:
+            return names[conf_item]
+        if hasattr(conf_item, "__name__"):
+            return conf_item.__name__
+        return str(conf_item)
+
 
         
     def _check_params(self) -> None:

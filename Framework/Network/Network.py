@@ -1,4 +1,5 @@
 from .NetworkModule import NetworkModule
+from .Stack import Stack
 import tensorflow as tf
 from typing import List, Dict, Tuple
 import os
@@ -22,6 +23,8 @@ class Network(NetworkModule):
         valid_split: float - decimal percentage of remaining data going to 
             validation. [default: .2]
 
+        stack: dict - dict defining the stack
+
     """
 
     def _setup(self) -> None:
@@ -30,6 +33,18 @@ class Network(NetworkModule):
         self.batchsize: int = self.params['batchsize']
         self.init_lr: float = self.params['init_learn_rate']
 
+        self.stack: Stack
+
+
+    def generate_config(self, indent_level: int = 0) -> str:
+        conf: str = "network_params = {\n"
+        idl: int = 1
+        sp: int = indent_level * 4
+        conf: str = self._generate_config(indent_level, skip = "stack")
+
+        conf += " "*sp + "'stack': {\n"
+        conf += self.stack.generate_config(idl+1)
+        conf += " "*sp + "}\n"
 
 
     @classmethod

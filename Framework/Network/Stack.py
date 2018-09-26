@@ -104,44 +104,27 @@ class Stack(AbstractLayer):
     def _compute_layer_ops(self) -> tf.Tensor:
         return self.layers[-1].outputs
 
-    def generate_config(self) -> str:
-        print(names)
-        def get_str(conf_item) -> str:
-            if hasattr(conf_item, "real_dtype"):
-                #tf dtypes
-                return "tf." + conf_item.name
-            if conf_item in names:
-                return names[conf_item]
-            if hasattr(conf_item, "__name__"):
-                return conf_item.__name__
-            return str(conf_item)
-
+    def generate_config(self, indent_level: int = 0) -> str:
         """Generates a config file for creating a network from above the 
         Framework directory.
         """
-        conf = "from Framework.Network.layers import *\n"
-        conf += "from Framework.Network.tf_names import *\n\n"
-        conf += "params = {\n"
+        idl: int = indent_level
+        sp: int = indent_level * 4
+        conf: str = self._generate_config(indent_level, skip = "layers")
 
-        for key in self.params:
-            # deal with the layers at the end
-            if key == "layers": continue
+        conf += " "*sp + "'layers': [\n"
+        for layer in self.layers:
+            conf += " "*(idl+1)*4 + "(" + type(layer).__name__ + ", "
+            conf += "'" + layer.name + "',\n"
+            conf += " "*(idl+2)*4 + "{\n"
+            conf += layer.generate_config(idl+3)
+            #for key in layer[2]:
+            #    conf += " "*16 + "'" + key + "': " + get_str(layer[2][key])
+            #    conf += ",\n"
+            conf += " "*(idl+2)*4 + "}\n"
+            conf += " "*(idl+1)*4 + "),\n"
 
-            conf += "    '" + key + "': " + get_str(self.params[key]) + ",\n"
-
-        conf += "    'layers': [\n"
-        for layer in self.params['layers']:
-            conf += " "*8 + "(" + get_str(layer[0]) + ", "
-            conf += "'" + layer[1] + "',\n"
-            conf += " "*12 + "{\n"
-            for key in layer[2]:
-                conf += " "*16 + "'" + key + "': " + get_str(layer[2][key])
-                conf += ",\n"
-            conf += " "*12 + "}\n"
-            conf += " "*8 + "),\n"
-
-        conf += " "*4 + "]\n"
-        conf += "}\n"
+        conf += " "*sp + "]\n"
         return conf
 
 

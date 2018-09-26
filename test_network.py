@@ -11,28 +11,10 @@ d = 3
 stack_params = {
         'batchsize': 1,
         'input_dims': (1,1,1),
-        'layers': [
-            (Locality0, None,
-                {
-                    'd': 3,
-                    'input_shape': (1,1,1)
-                }
-            ),
-            (Locality1, None,
-                {
-                    'input_shape': (1,3,1)
-                }
-            ),
-            (Locality1, None,
-                {
-                    'input_shape': (1,3,1)
-                }
-            ),
-            (Flatten, None,
-                {
-                    'input_shape': (1,3,1)
-                }
-            )
+        'layers': [(Locality0, {'d': 3}),
+            Locality1,
+            Locality1,
+            Flatten
         ]
     }
 
@@ -42,8 +24,9 @@ s = Stack(inputs, stack_params)
 
 print("stack params")
 print(s.params)
-with open("test_cfg.py", "w+") as f:
-    f.write(s.generate_config())
+#with open("test_cfg.py", "w+") as f:
+#    f.write(s.generate_config())
+print(s.generate_config())
 
 data = np.array([[[1]]])
 
