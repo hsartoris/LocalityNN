@@ -26,7 +26,7 @@ network_params = {
 import test_cfg
 network_params2 = test_cfg.network_params
 
-net = Network(network_params2)
+net = Network(network_params)
 
 #s = Stack(inputs, stack_params)
 

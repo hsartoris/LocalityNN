@@ -16,8 +16,6 @@ class Stack(AbstractLayer):
         #TODO: this is all badly typed
 
         if self.debug: print("Adding layer", len(self.layers))
-        if self.debug: print("Config:\n", layer_conf)
-
         # is it a 3-tuple?
         assert(len(layer_conf) == 3)
 
@@ -46,11 +44,20 @@ class Stack(AbstractLayer):
         # get layer inputs
         layer_inputs: tf.Tensor
         if len(self.layers) == 0:
+            if self.debug:
+                print("Layer 0 inputs: using Stack inputs")
             # first layer
             layer_inputs = self.inputs
         else:
+            if self.debug:
+                print("Layer " + str(len(self.layers)) +
+                        " inputs derived from previous layer.")
             # subsequent layers
             layer_inputs = self.layers[-1].outputs
+
+        if self.debug:
+            print("Shape: " + str(layer_inputs.get_shape().as_list()))
+
 
         # TODO: some kinda checking here
         layer_conf_dict['input_shape'] = \
