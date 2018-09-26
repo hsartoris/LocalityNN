@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+from Framework.Network import Network
 from Framework.Network.Stack import Stack
 from Framework.Network.layers import Locality0, Locality1, Flatten
 
@@ -9,8 +10,6 @@ d = 3
 #print(expand.shape)
 
 stack_params = {
-        'batchsize': 1,
-        'input_dims': (1,1,1),
         'layers': [(Locality0, {'d': 3}),
             Locality1,
             Locality1,
@@ -18,25 +17,37 @@ stack_params = {
         ]
     }
 
-inputs = tf.placeholder(tf.float32, (1,1,1))
+network_params = {
+        'batchsize': 1,
+        'data_shape': (2, 3),
+        'stack_params': stack_params
+        }
 
-s = Stack(inputs, stack_params)
+import test_cfg
+network_params2 = test_cfg.network_params
 
-print("stack params")
-print(s.params)
-#with open("test_cfg.py", "w+") as f:
-#    f.write(s.generate_config())
-print(s.generate_config())
+net = Network(network_params2)
 
-data = np.array([[[1]]])
+#s = Stack(inputs, stack_params)
 
-print(s.outputs.get_shape().as_list())
+#print("stack params")
+#print(s.params)
+with open("test_cfg.py", "w+") as f:
+    f.write(net.generate_config())
+#print(s.generate_config())
+
+inputs = net.inputs
+data = np.random.random(net.input_shape)
+outs = net.outputs
+
+print("Output shape:")
+print(outs.get_shape().as_list())
 
 init = tf.global_variables_initializer()
 
 with tf.Session() as sess:
     sess.run(init)
     writer = tf.summary.FileWriter('testlogs', sess.graph)
-    print(sess.run(s.outputs, feed_dict={inputs:data}))
+    print(sess.run(outs, feed_dict={inputs:data}))
     writer.close()
 

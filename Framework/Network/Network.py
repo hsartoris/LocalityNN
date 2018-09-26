@@ -33,22 +33,36 @@ class Network(NetworkModule):
         self.batchsize: int = self.params['batchsize']
         self.init_lr: float = self.params['init_learn_rate']
 
-        self.stack: Stack
+        self.data_shape: Tuple[int, int] = self.params['data_shape']
+
+        self.input_shape: Tuple[int, int, int] = (self.batchsize,
+                self.data_shape[0], self.data_shape[1])
+
+        self.inputs: tf.Tensor = tf.placeholder(tf.float32, self.input_shape)
+
+        self.stack: Stack = Stack(self.inputs,
+                params = self.params['stack_params'],
+                parent_params = self.params)
+        self.outputs: tf.Tensor = self.stack.outputs
 
 
     def generate_config(self, indent_level: int = 0) -> str:
-        conf: str = "network_params = {\n"
+        conf: str = "from Framework.Network.layers import *\n"
+        conf += "from Framework.Network.tf_names import *\n\n"
+        conf += "network_params = {\n"
         idl: int = 1
-        sp: int = indent_level * 4
-        conf: str = self._generate_config(indent_level, skip = "stack")
+        sp: int = idl * 4
+        conf += self._generate_config(idl, skip = "stack_params")
 
-        conf += " "*sp + "'stack': {\n"
+        conf += " "*sp + "'stack_params': {\n"
         conf += self.stack.generate_config(idl+1)
         conf += " "*sp + "}\n"
+        conf += "}\n"
+        return conf
 
 
     @classmethod
     def _import_default_params(cls) -> object:
-        from ..conf import network
+        from .conf import network
         return network
 
