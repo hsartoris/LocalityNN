@@ -28,7 +28,8 @@ def parse_tfrecord(example, name: str):
     return {"time_series": parsed[name + '/entry']}, labels
 
 def load_to_input_fn(data_dir: str, name: str, shuffle_buffer_size: int,
-        batchsize: int, prefetch_buffer: int = 1, num_parallel: int = 2):
+        batchsize: int, prefetch_buffer: int = 1, num_parallel: int = 2,
+        repeat: bool = True):
     """Loads a TFRecord encoded dataset from data_dir, where the files in the 
     dataset start with name, e.g. name=train -> train-001.tfrecord
 
@@ -41,8 +42,11 @@ def load_to_input_fn(data_dir: str, name: str, shuffle_buffer_size: int,
     files = tf.data.Dataset.list_files(join(data_dir, name) + "*.tfrecords")
     dataset = files.interleave(tf.data.TFRecordDataset, 2)
     # shuffle dataset and repeat infinitely
-    dataset = dataset.apply(
-            tf.contrib.data.shuffle_and_repeat(shuffle_buffer_size))
+    if repeat:
+        dataset = dataset.apply(
+                tf.contrib.data.shuffle_and_repeat(shuffle_buffer_size))
+    else:
+        dataset = dataset.shuffle(shuffle_buffer_size)
     # map parse function onto dataset and batch
     dataset = dataset.apply(tf.contrib.data.map_and_batch(
         map_func = lambda ex: parse_tfrecord(ex, name),

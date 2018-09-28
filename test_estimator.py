@@ -1,5 +1,6 @@
 import tensorflow as tf
 import numpy as np
+from Framework.Network.tf_names import *
 from Framework.Network import Network
 from Framework.Network.Stack import Stack
 from Framework.Network.layers import Locality0, Locality1, Flatten
@@ -22,8 +23,7 @@ train_steps = 5000
 stack_params = {
         'layers': [(Locality0, {'d': 6}),
             Locality1,
-            Locality1,
-            Flatten
+            (Flatten, {'activation': tanh})
         ]
     }
 
@@ -41,7 +41,7 @@ est = tf.estimator.Estimator(model_fn = net.model_fn, model_dir="/tmp/model")
 tensors_to_log = {"probabilities": "prediction_activation"}
 logging_hook = tf.train.LoggingTensorHook(
         tensors = tensors_to_log,
-        every_n_iter = 50)
+        every_n_iter = 250)
 
 est.train(input_fn = lambda: load_to_input_fn(
                                     data_dir = tfrecords_dir,
@@ -55,7 +55,8 @@ eval_results = est.evaluate(input_fn = lambda: load_to_input_fn(
                                     data_dir = tfrecords_dir,
                                     name = "testing",
                                     shuffle_buffer_size = shuffle_buffer_size,
-                                    batchsize = batchsize))
+                                    batchsize = batchsize,
+                                    repeat = False))
 print(eval_results)
 
 #init = tf.global_variables_initializer()

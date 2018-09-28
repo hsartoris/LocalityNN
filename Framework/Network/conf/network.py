@@ -7,7 +7,7 @@ param_defaults: Dict[str, any] = {
         'stack_params': None,
         'init_learn_rate': None,
         'optimizer': Adam,
-        'loss_op': absolute_difference,
+        'loss_op': modified_mse,
         'prediction_activation': softmax
         }
 

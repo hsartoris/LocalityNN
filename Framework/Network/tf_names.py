@@ -16,6 +16,7 @@ random_normal: type = tf.random_normal_initializer
 # activations
 relu: Callable = tf.nn.relu
 softmax: Callable = tf.nn.softmax
+tanh: Callable = tf.nn.tanh
 
 # optimizers
 Adadelta: Optimizer = tf.keras.optimizers.Adadelta
@@ -39,5 +40,6 @@ names = {
         tf.keras.optimizers.RMSprop: "RMSprop",
         tf.keras.optimizers.SGD: "SGD",
         modified_mse: "modified_mse",
-        tf.losses.absolute_difference: "absolute_difference"
+        tf.losses.absolute_difference: "absolute_difference",
+        tf.nn.tanh: "tanh",
 }
