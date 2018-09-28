@@ -14,53 +14,87 @@ class Network(NetworkModule):
         batchsize: int
         init_learn_rate: float
         optimizer
-        train_steps: int
-        epoch_len: int [default: int(num_samples/batchsize)]
-        save_epoch: int [default: 1]
-        save_step: int (optional)
+        loss_op
+        prediction_activation
 
-        data_dir: str
-        train_split: float - decimal percentage of total data to allocate to 
-            training/validation. remainder goes to testing. [default: 1.0]
-        valid_split: float - decimal percentage of remaining data going to 
-            validation. [default: .2]
-
-        stack: dict - dict defining the stack
+        stack_params: dict - dict defining the stack
 
     """
+     
+    def model_fn(self, features, labels, mode):
+        """Function that calls Stack to build the network and defines ops 
+        required for training and evaluation.
 
-    def _setup(self) -> None:
-        self.batchsize: int = self.params['batchsize']
-        self.init_lr: float = self.params['init_learn_rate']
+        Designed for use with tf.estimator.Estimator
+        """
+        # retrieve flat time series from features dict
+        # why this is a dict I don't know
+        inputs: tf.Tensor = features['time_series']
 
-        self.data_shape: Tuple[int, int] = self.params['data_shape']
+        # reshape inputs appropriately
+        inputs = tf.reshape(inputs, list(self.input_shape))
 
-        self.input_shape: Tuple[int, int, int] = (self.batchsize,
-                self.data_shape[0], self.data_shape[1])
-
-        self.data_dir: str = self.params['data_dir']
-        # TODO: type
-        self.dataset_train = load_dataset(
-                data_dir = self.params['data_dir'],
-                name = "train",
-                shuffle_buffer_size = self.params['shuffle_buffer_size'],
-                batchsize = self.batchsize)
-
-        self.dataset_validate = load_dataset(
-                data_dir = self.params['data_dir'],
-                name = "validate",
-                shuffle_buffer_size = self.params['shuffle_buffer_size'],
-                batchsize = self.batchsize)
-
-        self.inputs: tf.Tensor = tf.placeholder(tf.float32, self.input_shape)
-
-        self.stack: Stack = Stack(self.inputs,
+        # send inputs through layer stack
+        # outputs stored at stack.outputs
+        self.stack: Stack = Stack(inputs,
                 params = self.params['stack_params'],
                 parent_params = self.params)
-        self.outputs: tf.Tensor = self.stack.outputs
 
+        predictions: Dict[str, any] = {
+                # TODO: more stuff on predictions
+                "probabilities": self.params['prediction_activation'](
+                    self.stack.outputs, name="prediction_activation")
+            }
+
+        if mode == tf.estimator.ModeKeys.PREDICT:
+            # prediction mode, duh
+            return tf.estimator.EstimatorSpec(mode=mode, 
+                    predictions=predictions)
+
+        # loss calculation
+        print("labels:", labels.get_shape().as_list())
+        print("outs:", self.stack.outputs.get_shape().as_list())
+        loss = self.params['loss_op'](labels = labels,
+                predictions = self.stack.outputs)
+
+        # training op
+        if mode == tf.estimator.ModeKeys.TRAIN:
+            optimizer = self.params['optimizer'](
+                    learning_rate = self.params['init_learn_rate'])
+            train_op = optimizer.minimize(
+                    loss = loss,
+                    global_step = tf.train.get_global_step())
+            return tf.estimator.EstimatorSpec(mode = mode, loss = loss,
+                    train_op = train_op)
+
+        # EVAL mode stuff
+        eval_metric_ops: Dict[str, any] = {
+                "accuracy": tf.metrics.accuracy(
+                    labels = labels,
+                    # This is... sketchy
+                    # on the other hand accuracy is a dumb metric so who cares
+                    predictions = predictions['probabilities'])
+                }
+        if mode == tf.estimator.ModeKeys.EVAL:
+            return tf.estimator.EstimatorSpec(
+                    mode = mode, loss = loss, eval_metric_ops = eval_metric_ops)
+
+        # unreachable
+        assert(False)
+
+
+    def _setup(self) -> None:
+        self.data_shape: Tuple[int, int] = self.params['data_shape']
+
+        self.input_shape: Tuple[int, int, int] = (self.params['batchsize'],
+                self.data_shape[0], self.data_shape[1])
 
     def generate_config(self, indent_level: int = 0) -> str:
+        if not hasattr(self, "stack"):
+            return("""Due to restrictions imposed in part by the TensorFlow 
+            Estimator framework and in part by decisions made in this framework, 
+            Network cannot generate a config until model_fn has been called.""")
+
         conf: str = "from Framework.Network.layers import *\n"
         conf += "from Framework.Network.tf_names import *\n\n"
         conf += "network_params = {\n"
