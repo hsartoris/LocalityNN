@@ -8,15 +8,15 @@ from os.path import isdir, isfile, join
 import sys
 from random import shuffle
 
-def parse_tfrecord(example):
+def parse_tfrecord(example, name: str):
     """Parses tfrecord Examples into... something.
     """
     #TODO: parameterize dtype
     example_fmt: Dict[str, any] = {
-            "train/entry": tf.FixedLenFeature([50],
+            name + "/entry": tf.FixedLenFeature([50],
                 #tf.float32, allow_missing = True),
                 tf.float32),
-            "train/label": tf.FixedLenFeature([25],
+            name + "/label": tf.FixedLenFeature([25],
                 #tf.float32, allow_missing = True)
                 tf.float32)
             }
@@ -40,7 +40,7 @@ def load_dataset(data_dir: str, name: str, buffer_size: int, batchsize: int,
     dataset = dataset.apply(tf.contrib.data.shuffle_and_repeat(buffer_size))
     # map parse function onto dataset and batch
     dataset = dataset.apply(tf.contrib.data.map_and_batch(
-        map_func = parse_tfrecord, batch_size = batchsize))
+        map_func = parse_tfrecord(name=name), batch_size = batchsize))
     #dataset = dataset.map(map_func = parse_tfrecord)
 
     # prefetch prefetch_buffer batches
