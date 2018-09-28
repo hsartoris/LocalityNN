@@ -15,7 +15,6 @@ class Network(NetworkModule):
         init_learn_rate: float
         optimizer
         train_steps: int
-        save_dir: str
         epoch_len: int [default: int(num_samples/batchsize)]
         save_epoch: int [default: 1]
         save_step: int (optional)
@@ -31,8 +30,6 @@ class Network(NetworkModule):
     """
 
     def _setup(self) -> None:
-
-        self.save_dir: str = self.params['save_dir']
         self.batchsize: int = self.params['batchsize']
         self.init_lr: float = self.params['init_learn_rate']
 
@@ -43,7 +40,17 @@ class Network(NetworkModule):
 
         self.data_dir: str = self.params['data_dir']
         # TODO: type
-        self.dataset = load_dataset(self.params['data_dir'])
+        self.dataset_train = load_dataset(
+                data_dir = self.params['data_dir'],
+                name = "train",
+                shuffle_buffer_size = self.params['shuffle_buffer_size'],
+                batchsize = self.batchsize)
+
+        self.dataset_validate = load_dataset(
+                data_dir = self.params['data_dir'],
+                name = "validate",
+                shuffle_buffer_size = self.params['shuffle_buffer_size'],
+                batchsize = self.batchsize)
 
         self.inputs: tf.Tensor = tf.placeholder(tf.float32, self.input_shape)
 
