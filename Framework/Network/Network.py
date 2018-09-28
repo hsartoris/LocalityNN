@@ -3,9 +3,12 @@ from .Stack import Stack
 import tensorflow as tf
 from typing import List, Dict, Tuple
 import os
+from .util import parse_tfrecord
 
 class Network(NetworkModule):
     """Builds, trains, and runs a complete network.
+    
+    Designed to be compatible with the TensorFlow Estimator library.
 
     Parameters:
         batchsize: int
@@ -37,6 +40,10 @@ class Network(NetworkModule):
 
         self.input_shape: Tuple[int, int, int] = (self.batchsize,
                 self.data_shape[0], self.data_shape[1])
+
+        self.data_dir: str = self.params['data_dir']
+        # TODO: type
+        self.dataset = load_dataset(self.params['data_dir'])
 
         self.inputs: tf.Tensor = tf.placeholder(tf.float32, self.input_shape)
 

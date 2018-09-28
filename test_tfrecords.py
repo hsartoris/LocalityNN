@@ -12,8 +12,13 @@ print(gen.get_structure())
 sim = Simulator(matmul, gen.get_structure())
 print(sim.n_steps(10).flatten())
 
+# 5 neurons
+# 10 timesteps
+# labels flattened shape: (25)
+# entries flattened shape: (50)
+
 data = []
-for i in range(1000):
+for i in range(10):
     data.append(sim.n_steps(10))
 
 label = gen.get_structure()

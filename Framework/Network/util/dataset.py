@@ -8,7 +8,44 @@ from os.path import isdir, isfile, join
 import sys
 from random import shuffle
 
+def parse_tfrecord(example):
+    """Parses tfrecord Examples into... something.
+    """
+    #TODO: parameterize dtype
+    example_fmt: Dict[str, any] = {
+            "train/entry": tf.FixedLenFeature([50],
+                #tf.float32, allow_missing = True),
+                tf.float32),
+            "train/label": tf.FixedLenFeature([25],
+                #tf.float32, allow_missing = True)
+                tf.float32)
+            }
+    parsed = tf.parse_single_example(example, example_fmt)
+    # TODO: reshape data to appropriate dimensionality
+    # or maybe that needs to happen in model_fn?
+    return parsed['train/entry'], parsed['train/label']
 
+def load_dataset(data_dir: str, name: str, buffer_size: int, batchsize: int,
+        prefetch_buffer: int = 1, num_parallel: int = 2):
+    """Loads a TFRecord encoded dataset from data_dir, where the files in the 
+    dataset start with name, e.g. name=train -> train-001.tfrecord
+
+    prefetch_buffer defines how many BATCHES to prefetch
+
+    """
+    
+    files = tf.data.Dataset.list_files(join(data_dir, name) + "*.tfrecords")
+    dataset = files.interleave(tf.data.TFRecordDataset, 2)
+    # shuffle dataset and repeat infinitely
+    dataset = dataset.apply(tf.contrib.data.shuffle_and_repeat(buffer_size))
+    # map parse function onto dataset and batch
+    dataset = dataset.apply(tf.contrib.data.map_and_batch(
+        map_func = parse_tfrecord, batch_size = batchsize))
+    #dataset = dataset.map(map_func = parse_tfrecord)
+
+    # prefetch prefetch_buffer batches
+    dataset = dataset.prefetch(buffer_size = prefetch_buffer)
+    return dataset
 
 def make_tfrecords(data: List[np.ndarray],
         labels: Union[List[np.ndarray], np.ndarray], save_dir: str,
