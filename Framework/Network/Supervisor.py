@@ -23,15 +23,20 @@ class Supervisor(NetworkModule):
 
     """
 
+    def train(self) -> None:
+        """Trains network based on configuration supplied at instantiation.
+        """
+        print("lol")
+
 
     def _setup(self) -> None:
         log.basicConfig(level=1)
 
         # validate dirs and get absolute paths
-        data_dir_abs, save_dir_abs = self.validate_dirs()
+        data_dir_abs, self.save_dir_abs = self.validate_dirs()
         # make log directory
-        os.mkdir(os.path.join(save_dir_abs, "logs"))
-        log_path: str = os.path.join(save_dir_abs, "logs", "log")
+        os.mkdir(os.path.join(self.save_dir_abs, "logs"))
+        log_path: str = os.path.join(self.save_dir_abs, "logs", "log")
         log.file_out(log_path)
 
         # store batchsize for convenience
@@ -65,6 +70,25 @@ class Supervisor(NetworkModule):
         # build graph (requires input_shape)
         self.build_graph()
 
+        # at this point, prediction, loss, and train ops are defined
+
+        # set up saver
+        self.saver = tf.train.Saver()
+
+        # set up summary ops
+        loss_sum = tf.summary.scalar("loss", self.loss)
+
+        # initialize variables and start session
+        init = tf.global_variables_initializer()
+
+        self.sess = tf.Session()
+        self.sess.run(init)
+
+        # save initial state
+        self.saver.save(self.sess, os.path.join(self.save_dir_abs, "init.ckpt"))
+
+
+
 
     def build_graph(self):
         log.info("Building graph")
@@ -79,6 +103,9 @@ class Supervisor(NetworkModule):
         log.info("Completed Stack")
 
         log.info("Building ops")
+        self.prediction = self.params['prediction_activation'](
+                self.stack.outputs)
+
         self.loss = self.params['loss_op'](labels = self.labels,
                 predictions = self.stack.outputs)
 
