@@ -25,15 +25,13 @@ def parse_tfrecord(example, name: str):
     labels = tf.expand_dims(parsed[name + '/label'], 0)
     # TODO: reshape data to appropriate dimensionality
     # or maybe that needs to happen in model_fn?
-    return {"time_series": parsed[name + '/entry']}, labels
+    return parsed[name + '/entry'], labels
 
-def load_to_input_fn(data_dir: str, name: str, shuffle_buffer_size: int,
+def load_dataset(data_dir: str, name: str, shuffle_buffer_size: int,
         batchsize: int, prefetch_buffer: int = 1, num_parallel: int = 2,
         repeat: bool = True):
     """Loads a TFRecord encoded dataset from data_dir, where the files in the 
     dataset start with name, e.g. name=train -> train-001.tfrecord
-
-    Returns a features, labels tuple to satisfy tf Estimator
 
     prefetch_buffer defines how many BATCHES to prefetch
 
@@ -55,9 +53,7 @@ def load_to_input_fn(data_dir: str, name: str, shuffle_buffer_size: int,
 
     # prefetch prefetch_buffer batches
     dataset = dataset.prefetch(buffer_size = prefetch_buffer)
-    iterator = dataset.make_one_shot_iterator()
-    features, labels = iterator.get_next()
-    return features, labels
+    return dataset
 
 def make_tfrecords(data: List[np.ndarray],
         labels: Union[List[np.ndarray], np.ndarray], save_dir: str,

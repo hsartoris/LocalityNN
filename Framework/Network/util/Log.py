@@ -5,6 +5,15 @@ import time
 dashes = 15
 logger = None
 
+def file_out(filename):
+    fh = logging.FileHandler(filename)
+    fh.setLevel(logging.INFO)
+    fh_d = logging.FileHandler(filename + "_debug")
+    fh_d.setLevel(logging.DEBUG)
+    logger.addHandler(fh)
+    logger.addHandler(fh_d)
+    debug("Stared logging to", filename, "and", filename + "_debug")
+
 def basicConfig(level, filename=None, runId=None):
     global logger
     if level == 1:
@@ -18,15 +27,8 @@ def basicConfig(level, filename=None, runId=None):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
 
-    fh = None
     if filename:
-        fh = logging.FileHandler(filename)
-        fh.setLevel(logging.INFO)
-        fh_d = logging.FileHandler(filename + "_debug")
-        fh_d.setLevel(logging.DEBUG)
-
-        logger.addHandler(fh)
-        logger.addHandler(fh_d)
+        file_out(filename)
 
     ch = logging.StreamHandler()
     ch.setLevel(logLevel)

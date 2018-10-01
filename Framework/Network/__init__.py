@@ -1,2 +1,2 @@
-from .Network import Network
+from .Supervisor import Supervisor
 from .Stack import Stack
