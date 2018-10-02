@@ -43,7 +43,7 @@ class Hypervisor(NetworkModule):
         self.run_count: int = 1
         if self.params['run_count'] > 1:
             self.run_count = self.params['run_count']
-            log.info("Running", run_count, "trials")
+            log.info("Running", self.run_count, "trials")
 
         self.create_supervisors(run_idx = (0 if self.run_count > 1 else None))
 
@@ -57,7 +57,9 @@ class Hypervisor(NetworkModule):
         """Creates List of supervisors pointing to appropriate output 
         directories.
         """
-        if not run_idx is None:
+
+        tf.reset_default_graph()
+        if run_idx is None:
             log.info("Creating supervisors")
         else:
             log.info("Creating supervisors for run", run_idx)
@@ -70,10 +72,38 @@ class Hypervisor(NetworkModule):
             if not run_idx is None:
                 super_path = os.path.join(super_path, str(run_idx))
             super_params[i]['save_dir'] = super_path
-            self.supervisors.append(Supervisor(super_params[i],
-                parent_params = self.params))
+            g = tf.Graph()
+            with g.as_default():
+                with tf.variable_scope("supervisor" + str(i)):
+                    self.supervisors.append(Supervisor(super_params[i],
+                        parent_params = self.params))
+                    self.supervisors[-1].graph = g
+
 
     def run(self) -> None:
+        """Runs all attached Supervisors up to run_count.
+        """
+        log.info("Starting run 0")
+        for i in range(len(self.supervisors)):
+            log.info("Running supervisor", i)
+            with self.supervisors[i].graph.as_default():
+                with tf.name_scope("supervisor" + str(i)):
+                    self.run_one(self.supervisors[i])
+
+        if self.run_count > 1:
+            for i in range(1, self.run_count):
+                log.info("Starting run", i)
+                self.create_supervisors(run_idx = i)
+                for j in range(len(self.supervisors)):
+                    log.info("Running supervisor", i)
+                    with self.supervisors[j].graph.as_default():
+                        with tf.variable_scope("supervisor" + str(j)):
+                            self.run_one(self.supervisors[j])
+
+
+
+
+    def run_one(self, supervisor: Supervisor) -> None:
         train_batches = \
                 int(self.params['train_item_count']/self.params['batchsize'])
         valid_batches = \
@@ -85,12 +115,12 @@ class Hypervisor(NetworkModule):
         step = 0
         for i in range(self.params['epochs']):
             log.info("Epoch", i)
-            train_loss = self.supervisor.summarize_epoch_loss(
+            train_loss = supervisor.summarize_epoch_loss(
                     steps = train_batches,
                     global_step = step,
                     mode = Supervisor.TRAIN)
             
-            valid_loss = self.supervisor.summarize_epoch_loss(
+            valid_loss = supervisor.summarize_epoch_loss(
                     steps = valid_batches,
                     global_step = step,
                     mode = Supervisor.VALID)
@@ -100,20 +130,21 @@ class Hypervisor(NetworkModule):
 
             if i % self.params['epochs_to_save'] == 0:
                 log.info("Saving at step", step)
-                self.supervisor.save(step)
+                supervisor.save(step)
 
             for j in range(epoch_len):
                 step += 1
-                self.supervisor.train()
+                supervisor.train()
                 self.pretty.arrow(j, epoch_len)
 
 
         log.info("Running test set")
-        test_loss = self.supervisor.summarize_epoch_loss(
+        test_loss = supervisor.summarize_epoch_loss(
                 steps = test_batches,
                 global_step = step,
                 mode = Supervisor.TEST)
         log.info("Test loss:", test_loss)
+        supervisor.close()
 
 
     def generate_config(self, indent_level: int = 0) -> str:

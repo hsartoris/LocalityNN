@@ -28,6 +28,12 @@ class Supervisor(NetworkModule):
 
     """
 
+    def close(self) -> None:
+        self.train_writer.close()
+        self.valid_writer.close()
+        self.test_writer.close()
+        self.sess.close()
+
     def save(self, global_step: int) -> None:
         self.saver.save(self.sess,
                 os.path.join(self.save_dir_abs, str(global_step) + ".ckpt"))
@@ -141,7 +147,7 @@ class Supervisor(NetworkModule):
 
         # initialize variables and start session
 
-        self.sess = tf.Session()
+        self.sess = tf.Session(graph = tf.get_default_graph())
         tf.train.get_or_create_global_step()
 
         if self.params['load_from_ckpt'] is None:

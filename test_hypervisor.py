@@ -1,6 +1,7 @@
 from Framework.Network import Hypervisor
 from Framework.Network.tf_names import *
 from Framework.Network.layers import *
+from copy import deepcopy
 
 stack_params = {
         'layers': [(Locality0, {'d': 6}),
@@ -9,9 +10,17 @@ stack_params = {
         ]
     }
 
-supervisor_params = {
+supervisor_params0 = {
         'stack_params': stack_params,
         }
+
+stack_params1 = deepcopy(stack_params)
+stack_params1['layers'][1] = Dumb1
+
+supervisor_params = [
+        supervisor_params0,
+        { 'stack_params': stack_params1}
+        ]
 
 hypervisor_params = {
         'batchsize': 10,
@@ -25,8 +34,9 @@ hypervisor_params = {
         'epochs_to_save': 10,
         'supervisor_params': supervisor_params,
         'batches_per_epoch': 60,
+        'run_count': 2,
         }
 
 hyp = Hypervisor(hypervisor_params)
 print(hyp.generate_config())
-#hyp.run()
+hyp.run()
