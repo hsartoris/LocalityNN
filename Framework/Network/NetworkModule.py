@@ -52,6 +52,8 @@ class NetworkModule(ABC):
 
     @classmethod
     def get_str(cls, conf_item: any) -> str:
+        if isinstance(conf_item, str):
+            return "'" + conf_item + "'"
         # this is pretty bad lol
         if hasattr(conf_item, "real_dtype"):
             #tf dtype

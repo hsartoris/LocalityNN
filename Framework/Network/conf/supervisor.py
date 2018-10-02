@@ -5,15 +5,15 @@ param_defaults: Dict[str, any] = {
         'batchsize': None,
         'data_shape': None,
         'stack_params': None,
-        'init_learn_rate': None,
+        'init_learn_rate': .0005,
         'optimizer': Adam,
         'loss_op': modified_mse,
-        'prediction_activation': softmax,
         'data_dir': None,
         'save_dir': None,
         'shuffle_buffer_size': None,
         'prefetch_buffer': 1,
         'dataset_num_parallel': 2,
+        'load_from_ckpt': None,
         }
 
 param_types: Dict[str, type] = {
@@ -23,12 +23,12 @@ param_types: Dict[str, type] = {
         'init_learn_rate': float,
         'optimizer': Optimizer,
         'loss_op': Callable,
-        'prediction_activation': Callable,
         'data_dir': str,
         'save_dir': str,
         'shuffle_buffer_size': int,
         'prefetch_buffer': int,
         'dataset_num_parallel': int,
+        'load_from_ckpt': str,
         }
 
 requirements: List[str] = [
