@@ -83,27 +83,33 @@ class Hypervisor(NetworkModule):
     def run(self) -> None:
         """Runs all attached Supervisors up to run_count.
         """
-        log.info("Starting run 0")
+        test_losses = np.zeros((len(self.supervisors), self.run_count))
+
+        for run in range(self.run_count):
+            log.info("Starting run", run)
+            # supervisors for run 0 come from _setup
+            if run > 0: self.create_supervisors(run_idx = run)
+
+            for i in range(len(self.supervisors)):
+                log.info("Running supervisor", i)
+                with self.supervisors[i].graph.as_default():
+                    with tf.name_scope("supervisor" + str(i)):
+                        test_loss = self.run_one(self.supervisors[i])
+                        test_losses[i, run] = test_loss
+
+        log.debug("Test losses:")
+        log.debug(test_losses)
         for i in range(len(self.supervisors)):
-            log.info("Running supervisor", i)
-            with self.supervisors[i].graph.as_default():
-                with tf.name_scope("supervisor" + str(i)):
-                    self.run_one(self.supervisors[i])
-
-        if self.run_count > 1:
-            for i in range(1, self.run_count):
-                log.info("Starting run", i)
-                self.create_supervisors(run_idx = i)
-                for j in range(len(self.supervisors)):
-                    log.info("Running supervisor", i)
-                    with self.supervisors[j].graph.as_default():
-                        with tf.variable_scope("supervisor" + str(j)):
-                            self.run_one(self.supervisors[j])
+            log.debug("---- Supervisor", i, "----")
+            log.debug("min loss:", np.min(test_losses[i]))
+            log.debug("max loss:", np.max(test_losses[i]))
+            log.debug("avg loss:", np.average(test_losses[i]))
+            log.debug("----------------------")
 
 
 
 
-    def run_one(self, supervisor: Supervisor) -> None:
+    def run_one(self, supervisor: Supervisor) -> float:
         train_batches = \
                 int(self.params['train_item_count']/self.params['batchsize'])
         valid_batches = \
@@ -145,6 +151,7 @@ class Hypervisor(NetworkModule):
                 mode = Supervisor.TEST)
         log.info("Test loss:", test_loss)
         supervisor.close()
+        return test_loss
 
 
     def generate_config(self, indent_level: int = 0) -> str:

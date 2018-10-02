@@ -30,11 +30,11 @@ hypervisor_params = {
         'train_item_count': 600,
         'valid_item_count': 200,
         'test_item_count': 200,
-        'epochs': 20,
+        'epochs': 40,
         'epochs_to_save': 10,
         'supervisor_params': supervisor_params,
         'batches_per_epoch': 60,
-        'run_count': 2,
+        'run_count': 20,
         }
 
 hyp = Hypervisor(hypervisor_params)
