@@ -12,13 +12,14 @@ param_defaults: Dict[str, any] = {
         'test_item_count': None,
         'batches_per_epoch': None,
         'epochs': None,
-        'epochs_to_save': 5
+        'epochs_to_save': 5,
+        'run_count': 1,
         }
 
 param_types: Dict[str, any] = {
         'batchsize': int,
         'data_shape': tuple,
-        'supervisor_params': dict,
+        'supervisor_params': (dict, list),
         'data_dir': str,
         'save_dir': str,
         'train_item_count': int,
@@ -26,7 +27,8 @@ param_types: Dict[str, any] = {
         'test_item_count': int,
         'batches_per_epoch': int,
         'epochs': int,
-        'epochs_to_save': int
+        'epochs_to_save': int,
+        'run_count': int,
         }
 
 requirements: List[str] = [

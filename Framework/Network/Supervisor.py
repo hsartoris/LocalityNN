@@ -92,14 +92,8 @@ class Supervisor(NetworkModule):
 
 
     def _setup(self) -> None:
-        log.basicConfig(level=1)
-
         # validate dirs and get absolute paths
         data_dir_abs, self.save_dir_abs = self.validate_dirs()
-        # make log directory
-        os.mkdir(os.path.join(self.save_dir_abs, "logs"))
-        log_path: str = os.path.join(self.save_dir_abs, "logs", "log")
-        log.file_out(log_path)
 
         # store batchsize for convenience
         self.batchsize: int = self.params['batchsize']
